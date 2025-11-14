@@ -1,0 +1,73 @@
+body {
+    background: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 30px;
+}
+
+/* Progress bar */
+.progress-container {
+    width: 100%;
+    background-color: #333;
+    height: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: #4CAF50;
+    width: 0%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+/* Options */
+.option {
+    margin-bottom: 8px;
+    padding: 10px;
+    border-radius: 5px;
+    background: #222;
+    transition: transform .2s, background .2s;
+}
+
+.option:hover {
+    transform: scale(1.03);
+    background: #333;
+}
+
+/* Correct / Incorrect */
+.correct {
+    background-color: #2e7d32 !important;
+}
+
+.incorrect {
+    background-color: #c62828 !important;
+}
+
+/* Buttons */
+button {
+    padding: 10px 18px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform .2s, background .2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background: #43a047;
+}
+
+/* Fade animation */
+.fade-in {
+    animation: fade .5s ease;
+}
+
+@keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

@@ -2,51 +2,66 @@
 <html>
 <head>
     <title>Python Quiz</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 30px; }
-        .progress-container { width: 100%; background-color: #ddd; height: 20px; margin-bottom: 20px; border-radius: 10px; }
-        .progress-bar { height: 20px; background-color: #4CAF50; width: 0%; border-radius: 10px; transition: width 0.5s; }
-        .option { margin-bottom: 8px; padding: 5px; border-radius: 5px; }
-        .correct { background-color: #c8e6c9; } /* green */
-        .incorrect { background-color: #ffcdd2; } /* red */
-        button { padding: 8px 16px; font-size: 14px; margin-top: 10px; }
-    </style>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 <body>
     <h1>Python Quiz</h1>
-    
-    <!-- Progress bar -->
-    <div class="progress-container">
-        <div class="progress-bar" style="width: {{ (question_number / total_questions) * 100 }}%;"></div>
+
+    <div id="question-box" class="fade-in">
+
+        <!-- Progress bar -->
+        <div class="progress-container">
+            <div class="progress-bar" style="width: {{ (question_number / total_questions) * 100 }}%;"></div>
+        </div>
+        <p>Progress: {{ question_number }}/{{ total_questions }}</p>
+
+        {% if show_feedback %}
+
+            <p><strong>Explanation:</strong> {{ question.explanation }}</p>
+
+            <form method="POST">
+                <button type="submit">Next Question</button>
+            </form>
+
+            <ul>
+                {% for opt in question.options %}
+                    {% if opt == correct %}
+                        <li class="option correct">{{ opt }} {% if selected == opt %}(Your choice){% endif %}</li>
+                    {% elif opt == selected %}
+                        <li class="option incorrect">{{ opt }} (Your choice)</li>
+                    {% else %}
+                        <li class="option">{{ opt }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+
+        {% else %}
+
+            <form method="POST">
+                <p><strong>{{ question.question }}</strong></p>
+
+                {% for opt in question.options %}
+                    <div class="option">
+                        <input type="radio" name="option" value="{{ opt }}" required> {{ opt }}
+                    </div>
+                {% endfor %}
+
+                <button type="submit">Submit Answer</button>
+            </form>
+
+        {% endif %}
     </div>
-    <p>Progress: {{ question_number }}/{{ total_questions }}</p>
+
+    <!-- External JS -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 
     {% if show_feedback %}
-        <p><strong>Explanation:</strong> {{ question.explanation }}</p>
-        <form method="POST">
-            <button type="submit">Next Question</button>
-        </form>
-        <ul>
-        {% for opt in question.options %}
-            {% if opt == correct %}
-                <li class="option correct">{{ opt }} {% if selected == opt %}(Your choice){% endif %}</li>
-            {% elif opt == selected %}
-                <li class="option incorrect">{{ opt }} (Your choice)</li>
-            {% else %}
-                <li class="option">{{ opt }}</li>
-            {% endif %}
-        {% endfor %}
-        </ul>
-    {% else %}
-        <form method="POST">
-            <p><strong>{{ question.question }}</strong></p>
-            {% for opt in question.options %}
-                <div class="option">
-                    <input type="radio" name="option" value="{{ opt }}" required> {{ opt }}
-                </div>
-            {% endfor %}
-            <button type="submit">Submit Answer</button>
-        </form>
+    <script>
+        highlightAnswer("{{ selected }}", "{{ correct }}");
+    </script>
     {% endif %}
 </body>
 </html>
