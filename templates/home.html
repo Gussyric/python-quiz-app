@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz App - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1 style="text-align:center;">Welcome to the Quiz App!</h1>
+    <p style="text-align:center;">Select a programming language to start the quiz:</p>
+
+    <div class="quiz-menu" style="margin:auto;">
+        <div class="quiz-menu">
+    <a class="quiz-btn" href="{{ url_for('quiz', language='python', reset=1) }}">Python Quiz</a>
+    <a class="quiz-btn" href="{{ url_for('quiz', language='java', reset=1) }}">Java Quiz</a>
+    <a class="quiz-btn" href="{{ url_for('quiz', language='cpp', reset=1) }}">C++ Quiz</a>
+</div>
+    </div>
+</body>
+</html>
