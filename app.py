@@ -1,99 +1,108 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import json
-import random
+import os
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key"
+app.secret_key = 'super-secret-key-123'  # Change this in production!
 
-def load_questions(language, num_questions=10):
-    # Load all questions for the chosen language
-    with open(f"questions/{language}.json") as f:
-        all_questions = json.load(f)
-    # Pick 10 random questions
-    return random.sample(all_questions, min(num_questions, len(all_questions)))
+QUESTIONS_FOLDER = 'questions'
 
-@app.route("/")
+def load_questions(lang):
+    path = os.path.join(QUESTIONS_FOLDER, f"{lang}.json")
+    if not os.path.exists(path):
+        return []
+    with open(path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+# Pre-load all quizzes at startup
+QUESTIONS = {
+    'python': load_questions('python'),
+    'cpp': load_questions('cpp'),
+    'java': load_questions('java')
+}
+
+@app.route('/')
 def home():
-    return render_template("home.html")
+    return render_template('home.html')
 
-# ============================
-# HOME PAGE – Language Select
-# ============================
-@app.route("/quiz/<language>", methods=["GET", "POST"])
-def quiz(language):
-    # Load questions if starting new quiz or switching language
-    if "questions" not in session or session.get("language") != language:
-        session["questions"] = load_questions(language)
-        session["index"] = 0
-        session["score"] = 0
-        session["language"] = language
+@app.route('/start/<lang>')
+def start_quiz(lang):
+    lang = lang.lower()  # Safety: ensure case doesn't matter
+    if lang not in QUESTIONS or not QUESTIONS[lang]:
+        return "Quiz not found!", 404
 
-    # Reset quiz if requested
-    if request.args.get("reset") == "1":
-        session["questions"] = load_questions(language)
-        session["index"] = 0
-        session["score"] = 0
-        return redirect(url_for("quiz", language=language))
+    session.clear()
+    session['lang'] = lang
+    session['question_number'] = 1
+    session['score'] = 0
+    session['total_questions'] = len(QUESTIONS[lang])
 
-    questions = session["questions"]
-    index = session["index"]
+    return redirect(url_for('quiz'))
 
-    # Quiz finished
-    if index >= len(questions):
-        return render_template(
-            "quiz_feedback.html",
-            finished=True,
-            score=session["score"],
-            total=len(questions),
-            language=language
-        )
+@app.route('/quiz', methods=['GET', 'POST'])
+def quiz():
+    lang = session.get('lang')
+    if not lang or lang not in QUESTIONS or not QUESTIONS[lang]:
+        return redirect(url_for('home'))
 
-    question = questions[index]
-    options = question["options"]
+    questions = QUESTIONS[lang]
+    q_idx = session['question_number'] - 1
+    total = session['total_questions']
 
-    # Handle POST
-    if request.method == "POST":
-        # If coming from Next Question button
-        if "next_question" in request.form:
-            session["index"] += 1
-            return redirect(url_for("quiz", language=language))
+    # === Quiz Finished ===
+    if q_idx >= total:
+        final_score = session['score']
+        session.clear()  # Optional: clean up session after quiz
+        return render_template('quiz_feedback.html',
+                               finished=True,
+                               score=final_score,
+                               total=total,
+                               language=lang.capitalize())
 
-        # Otherwise, handle answer submission
-        selected = request.form.get("option")
-        correct = question["answer"]
+    current_question = questions[q_idx]
 
-        if selected == correct:
-            session["score"] += 1
+    if request.method == 'POST':
+        # Next button pressed
+        if 'next_question' in request.form:
+            session['question_number'] += 1
+            return redirect(url_for('quiz'))
 
-        session["selected"] = selected
-        session["correct"] = correct
+        # Answer submitted
+        selected = request.form.get('option')
+        if not selected:
+            # Prevent submission without selecting (though HTML required helps)
+            selected = None
 
-        feedback_msg = "Correct!" if selected == correct else "Incorrect!"
+        correct = current_question['answer']
+        is_correct = selected == correct
 
-        return render_template(
-            "quiz_feedback.html",
-            question=question,
-            options=options,
-            question_number=index + 1,
-            total_questions=len(questions),
-            selected=selected,
-            correct=correct,
-            show_feedback=True,
-            feedback_msg=feedback_msg,
-            language=language,
-            finished=False
-        )
+        # Only increment score on first correct attempt (prevents cheating by resubmitting)
+        if is_correct and session.get('answered_correctly', True):
+            session['score'] += 1
+        session['answered_correctly'] = False  # Mark this question as processed
 
-    # GET → show question normally
-    return render_template(
-        "quiz_feedback.html",
-        question=question,
-        options=options,
-        question_number=index + 1,
-        total_questions=len(questions),
-        show_feedback=False,
-        language=language,
-        finished=False
-    )
-if __name__ == "__main__":
+        return render_template('quiz_feedback.html',
+                               language=lang.capitalize(),
+                               question=current_question,
+                               options=current_question['options'],
+                               correct=correct,
+                               selected=selected,
+                               is_correct=is_correct,
+                               feedback_msg="Correct!" if is_correct else "Incorrect!",
+                               show_feedback=True,
+                               question_number=session['question_number'],
+                               total_questions=total,
+                               score=session['score'])
+
+    # === Fresh Question Load (GET) ===
+    session['answered_correctly'] = True  # Reset for new question
+    return render_template('quiz_feedback.html',
+                           language=lang.capitalize(),
+                           question=current_question,
+                           options=current_question['options'],
+                           show_feedback=False,
+                           question_number=session['question_number'],
+                           total_questions=total)
+
+if __name__ == '__main__':
     app.run(debug=True)

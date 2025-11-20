@@ -3,17 +3,49 @@
 <head>
     <title>Quiz App - Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            margin: 0;
+            padding: 40px;
+        }
+        h1, p { text-align: center; }
+        .quiz-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            margin-top: 60px;
+        }
+        .quiz-btn {
+            padding: 22px 40px;
+            font-size: 1.6em;
+            background: #007acc;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            width: 320px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 122, 204, 0.3);
+        }
+        .quiz-btn:hover {
+            background: #005a99;
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(0, 90, 153, 0.5);
+        }
+    </style>
 </head>
 <body>
-    <h1 style="text-align:center;">Welcome to the Quiz App!</h1>
-    <p style="text-align:center;">Select a programming language to start the quiz:</p>
+    <h1>Welcome to the Quiz App!</h1>
+    <p>Select a programming language to start the quiz:</p>
 
-    <div class="quiz-menu" style="margin:auto;">
-        <div class="quiz-menu">
-    <a class="quiz-btn" href="{{ url_for('quiz', language='python', reset=1) }}">Python Quiz</a>
-    <a class="quiz-btn" href="{{ url_for('quiz', language='java', reset=1) }}">Java Quiz</a>
-    <a class="quiz-btn" href="{{ url_for('quiz', language='cpp', reset=1) }}">C++ Quiz</a>
-</div>
+    <div class="quiz-menu">
+        <a class="quiz-btn" href="{{ url_for('start_quiz', lang='python') }}">Python Quiz</a>
+        <a class="quiz-btn" href="{{ url_for('start_quiz', lang='java') }}">Java Quiz</a>
+        <a class="quiz-btn" href="{{ url_for('start_quiz', lang='cpp') }}">C++ Quiz</a>
     </div>
 </body>
 </html>
