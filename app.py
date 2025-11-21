@@ -1,15 +1,38 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, jsonify, redirect, url_for
 import json
 import random
+from openai import OpenAI
+from api import API_KEY
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
 
+client = OpenAI(api_key = API_KEY)
+
+def generate_explanation(question_text, user_answer, correct_answer):
+    prompt = f"""
+    Question: {question_text}
+    Correct Answer: {correct_answer}
+    User Selected: {user_answer}
+
+    Explain in detail why the correct answer is correct and why the user's choice may be incorrect.
+    """
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}],
+            max_completion_tokens=150  # updated parameter
+        )
+        explanation = response.choices[0].message.content.strip()
+    except Exception as e:
+        explanation = "No explanation available. Please try again."
+        print("OpenAI API Error:", e)
+    
+    return explanation
+
 def load_questions(language, num_questions=10):
-    # Load all questions for the chosen language
     with open(f"questions/{language}.json") as f:
         all_questions = json.load(f)
-    # Pick 10 random questions
     return random.sample(all_questions, min(num_questions, len(all_questions)))
 
 @app.route("/")
@@ -17,83 +40,70 @@ def home():
     return render_template("home.html")
 
 # ============================
-# HOME PAGE – Language Select
+# Quiz Page – Serve AJAX Template
 # ============================
-@app.route("/quiz/<language>", methods=["GET", "POST"])
-def quiz(language):
-    # Load questions if starting new quiz or switching language
-    if "questions" not in session or session.get("language") != language:
+@app.route("/quiz/<language>")
+def quiz_page(language):
+    # Reset quiz if requested or first time
+    reset = request.args.get("reset")
+    if reset == "1" or "questions" not in session or session.get("language") != language:
         session["questions"] = load_questions(language)
         session["index"] = 0
         session["score"] = 0
         session["language"] = language
 
-    # Reset quiz if requested
-    if request.args.get("reset") == "1":
-        session["questions"] = load_questions(language)
-        session["index"] = 0
-        session["score"] = 0
-        return redirect(url_for("quiz", language=language))
+    return render_template("quiz_ajax.html", language=language)
 
-    questions = session["questions"]
-    index = session["index"]
+# ============================
+# AJAX GET Question
+# ============================
+@app.route("/quiz/<language>/get_question", methods=["GET"])
+def get_question(language):
+    index = session.get("index", 0)
+    questions = session.get("questions", [])
 
-    # Quiz finished
     if index >= len(questions):
-        return render_template(
-            "quiz_feedback.html",
-            finished=True,
-            score=session["score"],
-            total=len(questions),
-            language=language
-        )
+        return jsonify({"finished": True, "score": session.get("score",0), "total": len(questions)})
 
     question = questions[index]
-    options = question["options"]
+    return jsonify({
+        "finished": False,
+        "question_number": index + 1,
+        "total_questions": len(questions),
+        "question": question["question"],
+        "options": question["options"],
+        "language": language
+    })
 
-    # Handle POST
-    if request.method == "POST":
-        # If coming from Next Question button
-        if "next_question" in request.form:
-            session["index"] += 1
-            return redirect(url_for("quiz", language=language))
+# ============================
+# AJAX Submit Answer
+# ============================
+@app.route("/quiz/<language>/answer", methods=["POST"])
+def submit_answer(language):
+    data = request.get_json()
+    selected = data.get("selected")
+    index = session.get("index", 0)
+    questions = session.get("questions", [])
 
-        # Otherwise, handle answer submission
-        selected = request.form.get("option")
-        correct = question["answer"]
+    if index >= len(questions):
+        return jsonify({"finished": True})
 
-        if selected == correct:
-            session["score"] += 1
+    question = questions[index]
+    correct = question["answer"]
 
-        session["selected"] = selected
-        session["correct"] = correct
+    if selected == correct:
+        session["score"] += 1
 
-        feedback_msg = "Correct!" if selected == correct else "Incorrect!"
+    explanation = generate_explanation(question["question"], selected, correct)
 
-        return render_template(
-            "quiz_feedback.html",
-            question=question,
-            options=options,
-            question_number=index + 1,
-            total_questions=len(questions),
-            selected=selected,
-            correct=correct,
-            show_feedback=True,
-            feedback_msg=feedback_msg,
-            language=language,
-            finished=False
-        )
+    session["index"] += 1
 
-    # GET → show question normally
-    return render_template(
-        "quiz_feedback.html",
-        question=question,
-        options=options,
-        question_number=index + 1,
-        total_questions=len(questions),
-        show_feedback=False,
-        language=language,
-        finished=False
-    )
+    return jsonify({
+        "selected": selected,
+        "correct": correct,
+        "feedback_msg": "Correct!" if selected==correct else "Incorrect!",
+        "explanation": explanation
+    })
+
 if __name__ == "__main__":
     app.run(debug=True)
