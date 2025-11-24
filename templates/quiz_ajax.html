@@ -1,22 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Quiz App</title>
+    <meta charset="UTF-8">
+    <title>Programming Quiz</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1 style="text-align:center;">Quiz</h1>
+    <div class="container">
+        <!-- Header -->
+        <div style="display:flex; justify-content: space-between; align-items:center;">
+            <h1 class="app-heading">Programming Language Quiz App</h1>
+            <div>
+                Logged in as: {{ session['user'] }} (ID: {{ session['user_id'] }}) |
+                <a href="{{ url_for('logout') }}"><button>Logout</button></a>
+            </div>
+        </div>
 
-    <div id="quiz-container" style="max-width: 600px; margin: auto;">
-        <div id="question-box"></div>
-        <div id="options-box"></div>
-        <div id="feedback-box"></div>
+        <!-- Quiz Content -->
+        <div id="quiz-container">
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div id="progress-text" style="margin-bottom:10px;">Progress: 0 / 0</div>
 
-        <button id="submit-btn" style="display:none;">Submit Answer</button>
-        <button id="next-btn" style="display:none;">Next Question</button>
+            <div id="question-box"></div>
+            <div id="options-box"></div>
+            <div id="feedback-box" style="margin-top:10px;"></div>
 
-        <div style="margin-top:20px; text-align:center;">
-            <a href="{{ url_for('home') }}"><button>Back to Home</button></a>
+            <button id="submit-btn" style="display:none;">Submit Answer</button>
+            <button id="next-btn" style="display:none;">Next Question</button>
+
+            <div style="margin-top:20px;">
+                <a href="{{ url_for('home') }}"><button>Back to Home</button></a>
+            </div>
         </div>
     </div>
 
@@ -25,7 +41,7 @@ let currentQuestion = {};
 let selectedOption = null;
 
 async function loadQuestion() {
-    // Hide buttons initially
+    // Reset feedback and buttons
     document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('next-btn').style.display = 'none';
     document.getElementById('feedback-box').innerHTML = '';
@@ -34,19 +50,25 @@ async function loadQuestion() {
     const res = await fetch(`/quiz/${language}/get_question`);
     const data = await res.json();
 
+    const questionBox = document.getElementById('question-box');
+    const optionsBox = document.getElementById('options-box');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+
     if (data.finished) {
-        document.getElementById('question-box').innerHTML = `<h2>Quiz Finished!</h2><p>Your score: ${data.score} / ${data.total}</p>`;
-        document.getElementById('options-box').innerHTML = '';
+        questionBox.innerHTML = `<h2>Quiz Finished!</h2><p>Your score: ${data.score} / ${data.total_questions}</p>`;
+        optionsBox.innerHTML = '';
+        progressBar.style.width = '100%';
+        progressText.textContent = `Progress: ${data.total_questions} / ${data.total_questions}`;
         return;
     }
 
     currentQuestion = data;
 
     // Render question
-    document.getElementById('question-box').innerHTML = `<h3>Question ${data.question_number}/${data.total_questions}:</h3><p>${data.question}</p>`;
+    questionBox.innerHTML = `<p><strong>Question ${data.question_number} / ${data.total_questions}:</strong> ${data.question}</p>`;
 
     // Render options
-    const optionsBox = document.getElementById('options-box');
     optionsBox.innerHTML = '';
     data.options.forEach(opt => {
         const div = document.createElement('div');
@@ -55,10 +77,16 @@ async function loadQuestion() {
         optionsBox.appendChild(div);
     });
 
+    // Update progress
+    const progressPercent = (data.question_number - 1) / data.total_questions * 100;
+    progressBar.style.width = `${progressPercent}%`;
+    progressText.textContent = `Progress: ${data.question_number - 1} / ${data.total_questions}`;
+
+    // Show submit button
     document.getElementById('submit-btn').style.display = 'inline-block';
 }
 
-// Submit Answer
+// Submit answer
 document.getElementById('submit-btn').addEventListener('click', async () => {
     const radios = document.querySelectorAll('input[name="option"]');
     selectedOption = null;
@@ -75,10 +103,9 @@ document.getElementById('submit-btn').addEventListener('click', async () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ selected: selectedOption })
     });
-
     const data = await res.json();
 
-    // Show feedback
+    // Feedback & explanation
     let fbHTML = `<p><strong>${data.feedback_msg}</strong></p>`;
     fbHTML += `<p><em>${data.explanation}</em></p>`;
     document.getElementById('feedback-box').innerHTML = fbHTML;
@@ -87,20 +114,21 @@ document.getElementById('submit-btn').addEventListener('click', async () => {
     const optionsDivs = document.querySelectorAll('.option');
     optionsDivs.forEach(div => {
         const text = div.textContent.trim();
-        if (text === data.correct) div.style.backgroundColor = "#4CAF50";
-        if (text === selectedOption && selectedOption !== data.correct) div.style.backgroundColor = "#f44336";
+        if (text === data.correct) div.classList.add('correct');
+        if (text === selectedOption && selectedOption !== data.correct) div.classList.add('incorrect');
     });
 
-    // Hide Submit, show Next
+    // Hide submit, show next
     document.getElementById('submit-btn').style.display = 'none';
     document.getElementById('next-btn').style.display = 'inline-block';
 });
 
-// Next Question
+// Next question
 document.getElementById('next-btn').addEventListener('click', () => {
     loadQuestion();
 });
 
+// Initial load
 window.onload = loadQuestion;
 </script>
 </body>

@@ -1,17 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Quiz App - Home</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Programming Quiz</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1 style="text-align:center;">Welcome to the Quiz App!</h1>
-    <p style="text-align:center;">Select a programming language to start the quiz:</p>
+    <div class="container">
+        <h1 class="app-heading">Programming Language Quiz App</h1>
 
-    <div class="quiz-menu" style="text-align:center; margin-top: 30px;">
-       <a class="quiz-btn" href="{{ url_for('quiz_page', language='python', reset=1) }}">Python Quiz</a>
-        <a class="quiz-btn" href="{{ url_for('quiz_page', language='java', reset=1) }}">Java Quiz</a>
-        <a class="quiz-btn" href="{{ url_for('quiz_page', language='cpp', reset=1) }}">C++ Quiz</a>
+        <p>Welcome, {{ session['user'] }}!</p>
+
+        <h2>Select a Quiz</h2>
+
+        <div class="quiz-buttons">
+            {% for lang in quizzes %}
+                <a href="{{ url_for('quiz_page', language=lang) }}" class="btn">
+                    {{ lang.capitalize() }} Quiz
+                </a>
+            {% endfor %}
+        </div>
+
+        <br>
+        <a href="{{ url_for('dashboard') }}"><button>View Dashboard</button></a>
+        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
     </div>
 </body>
 </html>

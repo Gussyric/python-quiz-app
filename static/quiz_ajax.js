@@ -6,27 +6,34 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const language = window.location.pathname.split("/").pop();
 
-    // Fetch and display the current question
     async function loadQuestion() {
-        const response = await fetch(`/quiz/${language}`);
+        const response = await fetch(`/quiz/${language}/get_question`);
         const data = await response.json();
+
+        const total = data.total_questions ?? 0;
+        const qNum = data.question_number ?? 0;
 
         if (data.finished) {
             questionBox.innerHTML = `
-                <h2>Quiz Finished!</h2>
-                <p class="score">Your score: ${data.score} / ${data.total}</p>
+                <h2>🎉 Quiz Finished!</h2>
+                <p class="score">Your score: ${data.score} / ${total}</p>
                 <div style="text-align:center; margin-top:30px;">
+                    <button id="restart-btn">Restart Quiz</button>
                     <a href="/"><button>Back to Home</button></a>
                 </div>
             `;
             progressBar.style.width = "100%";
-            progressText.textContent = `Progress: ${data.total} / ${data.total}`;
+            progressText.textContent = `Progress: ${total} / ${total}`;
+
+            document.getElementById("restart-btn").addEventListener("click", () => {
+                window.location.href = `/quiz/${language}?reset=1`;
+            });
             return;
         }
 
         quizTitle.textContent = `Quiz: ${data.language.charAt(0).toUpperCase() + data.language.slice(1)}`;
-        progressBar.style.width = `${(data.question_number / data.total_questions) * 100}%`;
-        progressText.textContent = `Progress: ${data.question_number} / ${data.total_questions}`;
+        progressBar.style.width = `${(qNum / total) * 100}%`;
+        progressText.textContent = `Progress: ${qNum} / ${total}`;
 
         let optionsHtml = "";
         data.options.forEach(opt => {
@@ -46,11 +53,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             <div id="feedback"></div>
         `;
 
-        // Attach submit listener
         document.getElementById("quiz-form").addEventListener("submit", submitAnswer);
     }
 
-    // Submit answer to server
     async function submitAnswer(event) {
         event.preventDefault();
         const form = event.target;
@@ -64,29 +69,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const data = await response.json();
 
-        // Show feedback and AI explanation
-        let feedbackHtml = `
+        const total = data.total_questions ?? 0;
+        const qNum = data.question_number ?? 0;
+
+        document.getElementById("feedback").innerHTML = `
             <p><strong>${data.feedback_msg}</strong></p>
             <p><em>${data.explanation}</em></p>
         `;
 
-        questionBox.innerHTML += feedbackHtml;
-
-        // Highlight options
-        const options = questionBox.querySelectorAll(".option");
+        const options = document.querySelectorAll(".option");
         options.forEach(optDiv => {
             const text = optDiv.textContent.trim();
-            if (text === data.correct) {
-                optDiv.classList.add("correct");
-            } else if (text === selected) {
-                optDiv.classList.add("incorrect");
-            }
+            if (text === data.correct) optDiv.classList.add("correct");
+            else if (text === selected) optDiv.classList.add("incorrect");
         });
 
-        // Show next question after 1.5s
+        progressBar.style.width = `${(qNum / total) * 100}%`;
+        progressText.textContent = `Progress: ${qNum} / ${total}`;
+
         setTimeout(loadQuestion, 1500);
     }
 
-    // Initial load
     loadQuestion();
 });
