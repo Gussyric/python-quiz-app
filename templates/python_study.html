@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Study Guide</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <!-- Back button at the top -->
+    <a href="{{ url_for('home') }}" class="btn">⬅ Back to Home</a>
+    <h1 class="app-heading">📘 Python Study Guide</h1>
+    <p>Review the fundamentals below before taking the quiz.</p>
+
+    <h2>1. Python Basics & Syntax</h2>
+    <ul>
+        <li>Arithmetic: + - * / // % **</li>
+        <li>Comments: # This is a comment</li>
+        <li>Equality: ==, !=, is</li>
+        <li>Type checking: type()</li>
+        <li>Truth values: empty strings/lists are False</li>
+        <li>Python created by: Guido van Rossum (1989)</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/python/python_basic_syntax.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>2. Data Types</h2>
+    <ul>
+        <li>int – whole numbers</li>
+        <li>float – numbers with decimals</li>
+        <li>str – text</li>
+        <li>list – ordered, changeable</li>
+        <li>tuple – ordered, immutable</li>
+        <li>set – unordered, unique items</li>
+        <li>dict – key/value pairs</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/python/python_data_types.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>3. String Operations & Operators</h2>
+    <ul>
+        <li>Indexing: "Python"[1] → 'y'</li>
+        <li>Length: len("Hello")</li>
+        <li>Repeat: "ab" * 3 → "ababab"</li>
+        <li>Concatenate: "Hello " + "World"</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/python/python_operators.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>4. List Operations</h2>
+    <ul>
+        <li>append() – add one item</li>
+        <li>extend() – add multiple items</li>
+        <li>insert() – insert at index</li>
+        <li>pop() – remove by index</li>
+        <li>remove() – remove by value</li>
+        <li>index() – get item index</li>
+        <li>List slicing: nums[1:4]</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/python/python_lists.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>5. Loops</h2>
+    <ul>
+        <li>for loops iterate over items</li>
+        <li>while loops run until condition is false</li>
+        <li>break stops loop early</li>
+        <li>continue skips iteration</li>
+        <li>Python does not have do-while</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/python/python_loops.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>6. Functions</h2>
+    <ul>
+        <li>Define: def my_function():</li>
+        <li>return – sends back a value</li>
+        <li>lambda – one-line anonymous functions</li>
+        <li>yield – generator functions</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/python/python_functions.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>7. Classes (OOP)</h2>
+    <ul>
+        <li>Create class: class MyClass:</li>
+        <li>Objects are instances of classes</li>
+        <li>Inheritance: class Child(Parent):</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/python/python_oops_concepts.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>8. Exceptions</h2>
+    <ul>
+        <li>Handle errors with try: ... except: ...</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/python/python_oops_concepts.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>9. Built-in Functions & Modules</h2>
+    <ul>
+        <li>len(), range(), enumerate()</li>
+        <li>max(), min(), sorted()</li>
+        <li>map(), round()</li>
+        <li>import math; math.sqrt()</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/python/python_modules.htm" target="_blank" class="btn">Read More</a>
+
+    <br><br>
+    <a href="{{ url_for('quiz_page', language='python') }}" class="btn">Start Python Quiz ➜</a>
+    <!-- Back button at the top -->
+    <a href="{{ url_for('home') }}" class="btn">⬅ Back to Home</a>
+    
+</div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+echo "__pycache__/
+instance/
+user_log.json
+users.json
+api.py
+*.db
+" > .gitignore

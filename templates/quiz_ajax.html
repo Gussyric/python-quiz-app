@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Programming Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div style="display:flex; justify-content: space-between; align-items:center;">
+            <h1 class="app-heading">Programming Language Quiz App</h1>
+            <div>
+                Logged in as: {{ session['user'] }} (ID: {{ session['user_id'] }}) |
+                <a href="{{ url_for('logout') }}"><button>Logout</button></a>
+            </div>
+        </div>
+
+        <!-- Quiz Content -->
+        <div id="quiz-container">
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div id="progress-text" style="margin-bottom:10px;">Progress: 0 / 0</div>
+
+            <div id="question-box"></div>
+            <div id="options-box"></div>
+            <div id="feedback-box" style="margin-top:10px;"></div>
+
+            <button id="submit-btn" style="display:none;">Submit Answer</button>
+            <button id="next-btn" style="display:none;">Next Question</button>
+
+            <div style="margin-top:20px;">
+                <a href="{{ url_for('home') }}"><button>Back to Home</button></a>
+            </div>
+        </div>
+    </div>
+
+<script>
+let currentQuestion = {};
+let selectedOption = null;
+
+async function loadQuestion() {
+    // Reset feedback and buttons
+    document.getElementById('submit-btn').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('feedback-box').innerHTML = '';
+
+    const language = "{{ language }}";
+    const res = await fetch(`/quiz/${language}/get_question`);
+    const data = await res.json();
+
+    const questionBox = document.getElementById('question-box');
+    const optionsBox = document.getElementById('options-box');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+
+    if (data.finished) {
+        questionBox.innerHTML = `<h2>Quiz Finished!</h2><p>Your score: ${data.score} / ${data.total_questions}</p>`;
+        optionsBox.innerHTML = '';
+        progressBar.style.width = '100%';
+        progressText.textContent = `Progress: ${data.total_questions} / ${data.total_questions}`;
+        return;
+    }
+
+    currentQuestion = data;
+
+    // Render question
+    questionBox.innerHTML = `<p><strong>Question ${data.question_number} / ${data.total_questions}:</strong> ${data.question}</p>`;
+
+    // Render options
+    optionsBox.innerHTML = '';
+    data.options.forEach(opt => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.innerHTML = `<input type="radio" name="option" value="${opt}"> ${opt}`;
+        optionsBox.appendChild(div);
+    });
+
+    // Update progress
+    const progressPercent = (data.question_number - 1) / data.total_questions * 100;
+    progressBar.style.width = `${progressPercent}%`;
+    progressText.textContent = `Progress: ${data.question_number - 1} / ${data.total_questions}`;
+
+    // Show submit button
+    document.getElementById('submit-btn').style.display = 'inline-block';
+}
+
+// Submit answer
+document.getElementById('submit-btn').addEventListener('click', async () => {
+    const radios = document.querySelectorAll('input[name="option"]');
+    selectedOption = null;
+    radios.forEach(r => { if(r.checked) selectedOption = r.value; });
+
+    if (!selectedOption) {
+        alert("Please select an option!");
+        return;
+    }
+
+    const language = "{{ language }}";
+    const res = await fetch(`/quiz/${language}/answer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ selected: selectedOption })
+    });
+    const data = await res.json();
+
+    // Feedback & explanation
+    let fbHTML = `<p><strong>${data.feedback_msg}</strong></p>`;
+    fbHTML += `<p><em>${data.explanation}</em></p>`;
+    document.getElementById('feedback-box').innerHTML = fbHTML;
+
+    // Highlight options
+    const optionsDivs = document.querySelectorAll('.option');
+    optionsDivs.forEach(div => {
+        const text = div.textContent.trim();
+        if (text === data.correct) div.classList.add('correct');
+        if (text === selectedOption && selectedOption !== data.correct) div.classList.add('incorrect');
+    });
+
+    // Hide submit, show next
+    document.getElementById('submit-btn').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'inline-block';
+});
+
+// Next question
+document.getElementById('next-btn').addEventListener('click', () => {
+    loadQuestion();
+});
+
+// Initial load
+window.onload = loadQuestion;
+</script>
+</body>
+</html>

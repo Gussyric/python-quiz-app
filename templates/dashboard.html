@@ -1,0 +1,18 @@
+<h1>Dashboard</h1>
+<h2>{{ session['user'] }}'s Quiz History</h2>
+
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Language</th>
+        <th>Score</th>
+        <th>Total Questions</th>
+    </tr>
+    {% for a in attempts %}
+    <tr>
+        <td>{{ a.language }}</td>
+        <td>{{ a.score }}</td>
+        <td>{{ a.total_questions }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{{ url_for('logout') }}"><button>Logout</button></a>
