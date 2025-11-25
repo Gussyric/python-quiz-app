@@ -3,22 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <!-- Link the same CSS used for quiz page -->
+    <title>Login - Programming Quiz</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Login</h1>
+        <h1 class="app-heading">Programming Language Quiz App</h1>
+
+        <!-- Introduction Section -->
+        <p id="app-intro">
+            Welcome to the Programming Language Quiz App! Test your knowledge in Python, Java, and C++ through fun quizzes. Track your progress and improve your coding skills with explanations for every question.
+        </p>
+
+        <!-- Stop Reading Button -->
+        <button id="stop-speech" class="btn">Stop Reading</button>
+
+         <!-- Login Form -->
         <form action="{{ url_for('login') }}" method="POST">
             <label for="username">Username:</label>
-            <input type="text" name="username" id="username" required>
+            <input type="text" id="username" name="username" required>
 
-            <label for="user_id">ID Number:</label>
-            <input type="text" name="user_id" id="user_id" required>
+            <label for="user_id">User ID:</label>
+            <input type="text" id="user_id" name="user_id" required>
 
-            <button type="submit">Login</button>
+            <button type="submit" class="btn">Login</button>
         </form>
     </div>
+
+    <script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const introText = document.getElementById('app-intro').innerText;
+        let utterance;
+
+        if ('speechSynthesis' in window) {
+            utterance = new SpeechSynthesisUtterance(introText);
+            speechSynthesis.speak(utterance);
+        } else {
+            console.log("Sorry, your browser does not support text-to-speech.");
+        }
+
+        // Stop button functionality
+        document.getElementById('stop-speech').addEventListener('click', () => {
+            speechSynthesis.cancel();
+        });
+    });
+    </script>
 </body>
 </html>

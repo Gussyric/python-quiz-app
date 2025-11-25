@@ -108,19 +108,21 @@ def login():
         username = request.form.get("username")
         user_id = request.form.get("user_id")
 
-        session["user"] = username
-        session["user_id"] = user_id
-
+        # Check if user exists
         user = User.query.filter_by(username=username, user_id=user_id).first()
         if not user:
+            # Create new user if not found
             user = User(username=username, user_id=user_id)
             db.session.add(user)
             db.session.commit()
 
+        # Store in session
+        session["user"] = username
+        session["user_id"] = user_id
+
         return redirect(url_for("home"))
 
     return render_template("login.html")
-
 
 @app.route("/logout")
 def logout():
@@ -228,6 +230,7 @@ def submit_answer(language):
         "question": question["question"],
         "options": options,
         "correct": correct,
+        "selected": selected,          # ← **FIXED**
         "explanation": explanation,
         "feedback_msg": "Correct!" if selected == correct else "Incorrect!"
     })
@@ -242,6 +245,15 @@ def dashboard():
     attempts = user.attempts if user else []
     return render_template("dashboard.html", attempts=attempts)
 
+@app.route("/")
+def index():
+    return redirect(url_for("login"))
+
+@app.route("/study/python")
+def python_study():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("python_study.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
