@@ -118,29 +118,29 @@ button:hover {
     animation: fade .5s ease;
 }
 
-#home-quiz-container {
-    display: flex;
-    justify-content: center; /* center horizontally */
-    flex-wrap: wrap;
-    gap: 40px; /* space between each quiz block */
+#home-quiz-container .home-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);  /* 3 columns */
+    grid-auto-rows: auto;                    /* 2 rows: quizzes + study */
+    gap: 25px;
+    justify-items: center;
     margin-top: 30px;
 }
 
-.quiz-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px; /* space between quiz and study buttons */
+.quiz-btn, .study-btn {
+    width: 180px;          /* make all buttons equal size */
+    text-align: center;
+    background-color: #28a745; /* green for study buttons */
 }
+
 
 #home-quiz-container .btn {
     padding: 18px 36px; /* bigger buttons */
     font-size: 18px;
     border-radius: 10px;
 }
-
-.study-btn {
-    background-color: #28a745; /* green for study buttons */
+.home-buttons a {
+    display: inline-block;
 }
 
 .study-btn:disabled {

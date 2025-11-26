@@ -15,23 +15,18 @@
         <h2>Select a Quiz</h2>
 
        <div id="home-quiz-container">
-            <!-- Python -->
-            <div class="quiz-option">
-                <a href="{{ url_for('quiz_page', language='python') }}" class="btn">Python Quiz</a>
+            <div class="home-buttons">
+        
+                <!-- Quiz Buttons (Row 1) -->
+                <a href="{{ url_for('quiz_page', language='python') }}" class="btn quiz-btn">Python Quiz</a>
+                <a href="{{ url_for('quiz_page', language='java') }}" class="btn quiz-btn">Java Quiz</a>
+                <a href="{{ url_for('quiz_page', language='cpp') }}" class="btn quiz-btn">C++ Quiz</a>
+
+                <!-- Study Buttons (Row 2) -->
                 <a href="{{ url_for('python_study') }}" class="btn study-btn">Study Python</a>
-            </div>
-
-            <!-- Java -->
-            <div class="quiz-option">
-                <a href="{{ url_for('quiz_page', language='java') }}" class="btn">Java Quiz</a>
-                <a href="#" class="btn study-btn disabled" title="Coming soon">Study Java</a>
-            </div>
-
-            <!-- C++ -->
-            <div class="quiz-option">
-                <a href="{{ url_for('quiz_page', language='cpp') }}" class="btn">Cpp Quiz</a>
-                <a href="#" class="btn study-btn disabled" title="Coming soon">Study Cpp</a>
-            </div>
+                <a href="{{ url_for('study_java') }}" class="btn study-btn">Study Java</a>
+                <a href="{{ url_for('study_cpp') }}" class="btn study-btn">Study C++</a>
+            </div> 
         </div>
 
         <br>

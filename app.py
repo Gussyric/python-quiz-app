@@ -255,5 +255,19 @@ def python_study():
         return redirect(url_for("login"))
     return render_template("python_study.html")
 
+
+@app.route("/study/cpp")
+def study_cpp():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("cpp_study.html")   # must match your file name exactly
+
+
+@app.route("/study/java")
+def study_java():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("java_study.html")  # must match your file name exactly
+
 if __name__ == "__main__":
     app.run(debug=True)
