@@ -1,7 +1,6 @@
-echo "__pycache__/
+__pycache__/
+*.pyc
 instance/
 user_log.json
 users.json
-api.py
-*.db
-" > .gitignore
+quiz.db
