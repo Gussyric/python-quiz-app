@@ -1,3 +1,6 @@
+/* =========================
+   Global Styles
+   ========================= */
 body {
     background: #111;
     color: #fff;
@@ -8,11 +11,77 @@ body {
 .app-heading {
     font-size: 3rem;
     font-weight: bold;
-    color: #2e7d32;
+    color: white;
     text-align: center;
     margin-bottom: 20px;
 }
 
+.intro-text {
+    color: white;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+/* =========================
+   Buttons & Links
+   ========================= */
+
+/* Unified button styles */
+button,
+.btn,
+.quiz-btn,
+.study-btn,
+#quiz-form button {
+    display: inline-block;
+    text-align: center;
+    background-color: #880397 !important;  /* purple */
+    color: white !important;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 18px;
+    text-decoration: none;
+    transition: transform 0.2s, background 0.2s;
+}
+
+/* Hover effect */
+button:hover,
+.btn:hover,
+.quiz-btn:hover,
+.study-btn:hover,
+#quiz-form button:hover {
+    background-color: #a33abf !important;  /* lighter purple on hover */
+    transform: scale(1.05);
+}
+
+/* Disabled state for study buttons */
+.study-btn:disabled {
+    background-color: #6c757d !important;
+    cursor: not-allowed;
+}
+
+/* =========================
+   Home Page Grid
+   ========================= */
+#home-quiz-container .home-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto;
+    gap: 25px;
+    justify-items: center;
+    margin-top: 30px;
+}
+
+.quiz-btn,
+.study-btn {
+    width: 180px;          
+    text-align: center;
+}
+
+/* =========================
+   Quiz Page Elements
+   ========================= */
 .quiz-menu {
     display: flex;
     flex-direction: column;
@@ -20,24 +89,31 @@ body {
     max-width: 300px;
 }
 
-.quiz-btn {
-    display: block;
-    text-align: center;
-    padding: 15px;
+.option {
+    margin-bottom: 8px;
+    padding: 10px;
+    border-radius: 5px;
+    background: #222;
+    transition: transform 0.2s, background 0.2s;
+    cursor: pointer;
+}
+
+.option:hover {
     background: #333;
-    border-radius: 10px;
-    text-decoration: none;
-    color: white;
-    font-size: 20px;
-    transition: 0.3s;
+    transform: scale(1.03);
 }
 
-.quiz-btn:hover {
-    background: #444;
-    transform: scale(1.05);
+.correct {
+    background-color: #2e7d32 !important;
 }
 
-/* Progress bar */
+.incorrect {
+    background-color: #c62828 !important;
+}
+
+/* =========================
+   Progress Bar
+   ========================= */
 .progress-container {
     width: 100%;
     background-color: #333;
@@ -54,98 +130,49 @@ body {
     transition: width 0.5s ease;
 }
 
-/* Options */
-.option {
-    margin-bottom: 8px;
-    padding: 10px;
-    border-radius: 5px;
-    background: #222;
-    transition: transform .2s, background .2s;
+/* =========================
+   Container
+   ========================= */
+.container {
+    width: 90%;
+    max-width: 900px;
+    margin: auto;
+    padding-top: 30px;
 }
 
-.option:hover {
-    transform: scale(1.03);
-    background: #333;
+/* =========================
+   Navigation Bar
+   ========================= */
+nav {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
 }
 
-/* Correct / Incorrect */
-.correct {
-    background-color: #2e7d32 !important;
+nav .btn {
+    margin-right: 10px;
 }
 
-.incorrect {
-    background-color: #c62828 !important;
-}
-
-/* Buttons */
-button {
-    padding: 10px 18px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform .2s, background .2s;
-}
-
-button:hover {
-    transform: scale(1.05);
-    background: #43a047;
-}
-
-/* Links styled as buttons */
-.btn {
-    display: inline-block;
-    text-align: center;
-    padding: 10px 18px;
-    background: #4CAF50;
-    color: white;
-    font-size: 16px;
-    border-radius: 8px;
-    text-decoration: none; /* remove underline */
-    cursor: pointer;
-    transition: transform .2s, background .2s;
-}
-
-.btn:hover {
-    transform: scale(1.05);
-    background: #43a047;
-}
-
-/* Fade animation */
+/* =========================
+   Animations
+   ========================= */
 .fade-in {
-    animation: fade .5s ease;
+    animation: fade 0.5s ease;
 }
 
-#home-quiz-container .home-buttons {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);  /* 3 columns */
-    grid-auto-rows: auto;                    /* 2 rows: quizzes + study */
-    gap: 25px;
-    justify-items: center;
-    margin-top: 30px;
+.new-patch {
+    background-color: #00ff99; /* bright green */
+    padding: 3px 6px;
+    border-radius: 4px;
+    transition: background-color 2s ease;
 }
 
-.quiz-btn, .study-btn {
-    width: 180px;          /* make all buttons equal size */
-    text-align: center;
-    background-color: #28a745; /* green for study buttons */
-}
-
-
-#home-quiz-container .btn {
-    padding: 18px 36px; /* bigger buttons */
-    font-size: 18px;
-    border-radius: 10px;
-}
-.home-buttons a {
-    display: inline-block;
-}
-
-.study-btn:disabled {
-    background-color: #6c757d; /* grey for disabled buttons */
-    cursor: not-allowed;
+/* Highlight the most recently applied patch */
+.new-patch {
+    background-color: #4444aa; /* dark purple highlight */
+    color: #fff;
+    padding: 4px 6px;
+    border-radius: 4px;
 }
 
 @keyframes fade {

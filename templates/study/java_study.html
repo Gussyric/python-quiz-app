@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java Study Guide</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Java Study Guide{% endblock %}
+
+{% block content %}
 <div class="container">
-    <!-- Back button at the top -->
     <a href="{{ url_for('home') }}" class="btn">⬅ Back to Home</a>
+
     <h1 class="app-heading">☕ Java Study Guide</h1>
     <p>Review these Java fundamentals before taking the quiz.</p>
 
@@ -19,7 +14,7 @@
         <li>Main method: public static void main(String[] args)</li>
         <li>Statements end with semicolons</li>
         <li>Compile → .class bytecode → JVM</li>
-        <li>Single-line comments: // comment</li>
+        <li>Single-line comments: // </li>
     </ul>
     <a href="https://www.tutorialspoint.com/java/java_basic_syntax.htm" target="_blank" class="btn">Read More</a>
 
@@ -29,14 +24,14 @@
         <li>double – decimals (64-bit)</li>
         <li>char – single character</li>
         <li>boolean – true/false</li>
-        <li>String – text (class, not primitive)</li>
+        <li>String – class, not primitive</li>
     </ul>
     <a href="https://www.tutorialspoint.com/java/java_basic_datatypes.htm" target="_blank" class="btn">Read More</a>
 
     <h2>3. Operators</h2>
     <ul>
         <li>Arithmetic: + - * / %</li>
-        <li>Comparison: == != &gt; &lt;</li>
+        <li>Comparison: == != > <</li>
         <li>Logical: && || !</li>
         <li>String concatenation: +</li>
     </ul>
@@ -44,11 +39,10 @@
 
     <h2>4. Control Flow</h2>
     <ul>
-        <li>if / else / else if</li>
-        <li>switch statements</li>
+        <li>if/else if/else</li>
+        <li>switch</li>
         <li>Loops: for, while, do-while</li>
-        <li>break – exit loop</li>
-        <li>continue – skip iteration</li>
+        <li>break / continue</li>
     </ul>
     <a href="https://www.tutorialspoint.com/java/java_loop_control.htm" target="_blank" class="btn">Read More</a>
 
@@ -57,53 +51,46 @@
         <li>Declare: int[] nums</li>
         <li>Initialize: new int[5]</li>
         <li>Access: nums[0]</li>
-        <li>Arrays have fixed size</li>
     </ul>
     <a href="https://www.tutorialspoint.com/java/java_arrays.htm" target="_blank" class="btn">Read More</a>
 
-    <h2>6. Object-Oriented Programming</h2>
+    <h2>6. OOP Fundamentals</h2>
     <ul>
-        <li>Create class: class MyClass { }</li>
-        <li>Constructor runs when object is created</li>
-        <li>Inheritance: class Child extends Parent</li>
-        <li>Polymorphism via method overloading/overriding</li>
-        <li>Encapsulation: private fields + getters/setters</li>
+        <li>class MyClass { }</li>
+        <li>Constructors</li>
+        <li>Inheritance: extends</li>
+        <li>Polymorphism</li>
+        <li>Encapsulation using getters/setters</li>
     </ul>
     <a href="https://www.tutorialspoint.com/java/java_object_classes.htm" target="_blank" class="btn">Read More</a>
 
     <h2>7. Interfaces & Abstract Classes</h2>
     <ul>
-        <li>Interface keyword: interface</li>
-        <li>Implement using: implements</li>
-        <li>Abstract class: abstract class MyClass</li>
-        <li>Cannot instantiate abstract classes</li>
+        <li>Interfaces: interface A</li>
+        <li>implements A</li>
+        <li>abstract class</li>
     </ul>
     <a href="https://www.tutorialspoint.com/java/java_interfaces.htm" target="_blank" class="btn">Read More</a>
 
     <h2>8. Exception Handling</h2>
     <ul>
-        <li>try / catch / finally</li>
-        <li>throw – manually throw exception</li>
-        <li>throws – declare possible exceptions</li>
-        <li>Common: ArithmeticException, NullPointerException</li>
+        <li>try/catch/finally</li>
+        <li>throw / throws</li>
+        <li>Common: NullPointerException, ArithmeticException</li>
     </ul>
     <a href="https://www.tutorialspoint.com/java/java_exceptions.htm" target="_blank" class="btn">Read More</a>
 
     <h2>9. Common Classes & Utilities</h2>
     <ul>
-        <li>Scanner for input</li>
-        <li>Math class: Math.sqrt(), Math.random()</li>
-        <li>Wrapper classes: Integer, Double, etc.</li>
-        <li>Collections: List, Set, Map</li>
+        <li>Scanner</li>
+        <li>Math</li>
+        <li>Wrapper classes</li>
+        <li>Collections framework</li>
     </ul>
     <a href="https://www.tutorialspoint.com/java/java_collections.htm" target="_blank" class="btn">Read More</a>
 
     <br><br>
     <a href="{{ url_for('quiz_page', language='java') }}" class="btn">Start Java Quiz ➜</a>
-    
-    <!-- Back button at bottom too -->
     <a href="{{ url_for('home') }}" class="btn">⬅ Back to Home</a>
-
 </div>
-</body>
-</html>
+{% endblock %}

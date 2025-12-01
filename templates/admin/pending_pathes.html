@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pending Patches</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #2c3e50; }
+        pre { background: #f0f0f0; padding: 10px; border-radius: 5px; max-height: 400px; overflow-y: scroll; }
+        .section { margin-bottom: 30px; }
+        button { padding: 10px 15px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Pending Patches</h1>
+
+    {% if patch_text %}
+        <div class="section">
+            <h2>Patch Ready for Review</h2>
+            <pre>{{ patch_text }}</pre>
+        </div>
+        <div class="section">
+            <form action="/admin/apply_patch" method="POST">
+                <input type="hidden" name="patch" value="{{ patch_text }}">
+                <input type="hidden" name="file" value="app.py">
+                <button type="submit">Apply Patch to app.py</button>
+            </form>
+        </div>
+    {% else %}
+        <p>No pending patches found.</p>
+    {% endif %}
+</body>
+</html>

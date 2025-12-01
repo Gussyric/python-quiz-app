@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Auto Fix</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f7f7f7; }
+        pre {
+            background: #1e1e1e;
+            color: #00ff7f;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>AI Auto-Fix Patch Suggestion</h1>
+
+<h3>Target File: {{ file }}</h3>
+
+<pre>{{ patch }}</pre>
+
+<form method="POST" action="/admin/apply_patch">
+    <input type="hidden" name="patch" value="{{ patch }}">
+    <input type="hidden" name="file" value="{{ file }}">
+    <button type="submit">Apply Patch</button>
+</form>
+
+</body>
+</html>

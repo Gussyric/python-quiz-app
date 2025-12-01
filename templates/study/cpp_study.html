@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}C++ Study Guide{% endblock %}
+
+{% block content %}
+<div class="container">
+    <a href="{{ url_for('home') }}" class="btn">⬅ Back to Home</a>
+
+    <h1 class="app-heading">💻 C++ Study Guide</h1>
+    <p>Review these C++ fundamentals before taking the quiz.</p>
+
+    <h2>1. C++ Basics & Syntax</h2>
+    <ul>
+        <li>Case-sensitive language</li>
+        <li>int main()</li>
+        <li>Semicolon ends statements</li>
+        <li>// and /* */ for comments</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/cplusplus/cpp_basic_syntax.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>2. Data Types</h2>
+    <ul>
+        <li>int, double, char</li>
+        <li>bool</li>
+        <li>string (from &lt;string&gt;)</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/cplusplus/cpp_data_types.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>3. Operators</h2>
+    <ul>
+        <li>Arithmetic</li>
+        <li>Comparison</li>
+        <li>Logical</li>
+        <li>Pointers (& and *)</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/cplusplus/cpp_operators.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>4. Control Flow</h2>
+    <ul>
+        <li>if/else/switch</li>
+        <li>for, while, do-while</li>
+        <li>break / continue</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/cplusplus/cpp_loop_types.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>5. Arrays</h2>
+    <ul>
+        <li>int arr[5];</li>
+        <li>Fixed size</li>
+        <li>Access: arr[0]</li>
+        <li>Index starts at 0</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/cplusplus/cpp_arrays.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>6. Object-Oriented Programming</h2>
+    <ul>
+        <li>class MyClass { }</li>
+        <li>Constructors</li>
+        <li>Inheritance: Child : public Parent</li>
+        <li>Polymorphism</li>
+        <li>Encapsulation</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/cplusplus/cpp_classes_objects.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>7. Abstract Classes & Interfaces</h2>
+    <ul>
+        <li>Pure virtual function = 0</li>
+        <li>Cannot instantiate abstract classes</li>
+    </ul>
+    <a href="https://www.geeksforgeeks.org/abstract-classes-in-c/" target="_blank" class="btn">Read More</a>
+
+    <h2>8. Exceptions</h2>
+    <ul>
+        <li>try / catch / throw</li>
+        <li>std::exception</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/cplusplus/cpp_exceptions_handling.htm" target="_blank" class="btn">Read More</a>
+
+    <h2>9. STL</h2>
+    <ul>
+        <li>vector, map, set, queue</li>
+        <li>sort, find, count</li>
+        <li>Iterators</li>
+    </ul>
+    <a href="https://www.tutorialspoint.com/cplusplus/cpp_stl_tutorial.htm" target="_blank" class="btn">Read More</a>
+
+    <br><br>
+    <a href="{{ url_for('quiz_page', language='cpp') }}" class="btn">Start C++ Quiz ➜</a>
+    <a href="{{ url_for('home') }}" class="btn">⬅ Back to Home</a>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Quiz – {{ language }}{% endblock %}
+
+{% block content %}
+<h1>{{ language | capitalize }} Quiz</h1>
+
+<div id="quiz-box">
+    Loading...
+</div>
+
+<script>
+loadQuestion();
+
+function loadQuestion() {
+    fetch(`/quiz/{{ language }}/get_question`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.finished) {
+                document.getElementById("quiz-box").innerHTML = `
+                    <h2>Finished!</h2>
+                    <p>Your Score: ${data.score}/${data.total_questions}</p>`;
+                return;
+            }
+
+            let html = `
+                <h2>Question ${data.question_number}/${data.total_questions}</h2>
+                <p>${data.question}</p>
+                <ul>
+            `;
+
+            data.options.forEach(o => {
+                html += `<li><button onclick="submitAnswer('${o}')">${o}</button></li>`;
+            });
+
+            html += `</ul>`;
+            document.getElementById("quiz-box").innerHTML = html;
+        });
+}
+
+function submitAnswer(opt) {
+    fetch(`/quiz/{{ language }}/answer`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({selected: opt})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.finished) {
+            loadQuestion();
+        } else {
+            document.getElementById("quiz-box").innerHTML = `
+                <h2>${data.feedback_msg}</h2>
+                <p><strong>Correct Answer:</strong> ${data.correct}</p>
+                <p>${data.explanation}</p>
+                <button onclick="loadQuestion()">Next Question</button>
+            `;
+        }
+    });
+}
+</script>
+
+{% endblock %}

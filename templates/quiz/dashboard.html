@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Your History{% endblock %}
+
+{% block content %}
+<h1>Your Quiz History</h1>
+
+{% if attempts %}
+<table>
+    <tr><th>Language</th><th>Score</th><th>Total</th></tr>
+    {% for a in attempts %}
+    <tr>
+        <td>{{ a.language }}</td>
+        <td>{{ a.score }}</td>
+        <td>{{ a.total_questions }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No quiz attempts yet.</p>
+{% endif %}
+
+{% endblock %}

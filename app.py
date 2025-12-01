@@ -1,14 +1,29 @@
 from flask import Flask, render_template, request, session, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from api import API_KEY
+from openai import OpenAI
+from importlib import reload
 import os
 import json
 import random
-from openai import OpenAI
-from api import API_KEY
+import logging
+import difflib
+import time
+import sys
 
-# ============================
+
+# ---------------------------
+# Logging Setup
+# ---------------------------
+logging.basicConfig(
+    filename='error.log',
+    level=logging.ERROR,
+    format='%(asctime)s %(levelname)s:%(message)s'
+)
+
+# ---------------------------
 # Flask App Setup
-# ============================
+# ---------------------------
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
 
@@ -21,12 +36,11 @@ os.makedirs(instance_path, exist_ok=True)
 db_path = os.path.join(instance_path, "users.db")
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 
-# ============================
+# ---------------------------
 # Database Models
-# ============================
+# ---------------------------
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
@@ -40,21 +54,18 @@ class QuizAttempt(db.Model):
     language = db.Column(db.String(50), nullable=False)
     user_id_fk = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-# ============================
-# Initialize Database
-# ============================
+# Initialize DB
 with app.app_context():
     db.create_all()
 
-# ============================
+# ---------------------------
 # OpenAI Client
-# ============================
+# ---------------------------
 client = OpenAI(api_key=API_KEY)
 
-# ============================
+# ---------------------------
 # Utility Functions
-# ============================
-
+# ---------------------------
 def get_available_quizzes():
     quiz_folder = os.path.join(os.getcwd(), "questions")
     return [f.replace(".json", "") for f in os.listdir(quiz_folder) if f.endswith(".json")]
@@ -74,14 +85,11 @@ def generate_explanation(question_text, user_answer, correct_answer):
             max_completion_tokens=120,
             stream=True
         )
-
         explanation = ""
         for event in response:
             if hasattr(event.choices[0].delta, "content") and event.choices[0].delta.content:
                 explanation += event.choices[0].delta.content
-
-    except Exception as e:
-        print("OpenAI API Error:", e)
+    except Exception:
         explanation = "No explanation available. Please try again."
 
     return explanation.strip()
@@ -91,16 +99,295 @@ def load_questions(language, num_questions=10):
         all_questions = json.load(f)
     return random.sample(all_questions, min(num_questions, len(all_questions)))
 
-# ============================
-# ROUTES
-# ============================
-@app.route('/home')
-def home():
-    if 'user' not in session:
-        return redirect(url_for('login'))
+# ---------------------------
+# Admin Routes
+# ---------------------------
 
-    quizzes = get_available_quizzes()
-    return render_template('home.html', quizzes=quizzes)
+@app.route("/admin/apply_patch", methods=["POST"])
+def apply_patch():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    patch_text = request.form["patch"]
+    file_path = request.form["file"]
+
+    with open(file_path, "r") as f:
+        original = f.readlines()
+
+    with open(file_path, "w") as f:
+        f.writelines(difflib.restore(patch_text.splitlines(), 1))
+
+    return "<h1>Patch Applied!</h1><p>Your code has been updated.</p>"
+
+
+@app.route("/admin/auto_fix", methods=["POST"])
+def auto_fix():
+    if "user" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    # Support JSON or form submission
+    if request.is_json:
+        file_path = request.json.get("file")
+    else:
+        file_path = request.form.get("file")
+        
+    if not file_path or not os.path.exists(file_path):
+        return jsonify({"error": "Invalid file path"}), 400
+
+    # Read the file
+    try:
+        with open(file_path, "r") as f:
+            code = f.read()
+    except Exception as e:
+        return jsonify({"error": f"Error reading file: {e}"}), 500
+
+    # Read last 5k of error log
+    try:
+        with open("error.log", "r") as f:
+            error_log = f.read()[-5000:]
+    except:
+        error_log = "No error logs available."
+
+    # Generate patch using OpenAI
+    prompt = f"""
+    You are an expert software engineer.
+
+    Given the Python/Flask code and error logs:
+
+    Code:
+    {code}
+
+    Errors:
+    {error_log}
+
+    Produce ONLY a unified diff patch.
+    """
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            max_completion_tokens=400
+        )
+        patch = getattr(response.choices[0].message, "content", "No patch returned.")
+        print("\n=== AUTO FIX GENERATED PATCH ===\n", patch, "\n=== END PATCH ===\n")
+    except Exception as e:
+        patch = f"OpenAI Error: {e}"
+
+    # --- Apply patch ---
+    try:
+        with open(file_path, "r") as f:
+            original = f.readlines()
+        patched_lines = difflib.restore(patch.splitlines(), 1)
+        with open(file_path, "w") as f:
+            f.writelines(patched_lines)
+        apply_status = "ok"
+    except Exception as e:
+        apply_status = f"Failed to apply patch: {e}"
+
+    # --- Reload module dynamically ---
+    module_name = os.path.splitext(os.path.basename(file_path))[0]
+    reload_status = ""
+    if apply_status == "ok":
+        if module_name in sys.modules:
+            try:
+                reload(sys.modules[module_name])
+                reload_status = f"Module {module_name} reloaded successfully."
+            except Exception as e:
+                reload_status = f"Failed to reload module {module_name}: {e}"
+        else:
+            reload_status = f"Module {module_name} not imported yet, will load on first import."
+
+    # --- Save patch to dashboard state ---
+    state = load_state()
+    state_patches = state.get("patches", [])
+    state_patches.append({
+        "file": file_path,
+        "time": time.strftime('%Y-%m-%d %H:%M:%S'),
+        "patch": patch
+    })
+    state["patches"] = state_patches[-50:]
+    save_state(state)
+    # -----------------------------------------
+
+    return jsonify({
+        "file": file_path,
+        "patch": patch,
+        "apply_status": apply_status,
+        "reload_status": reload_status
+    })
+# ---------------------------
+# Dashboard State
+# ---------------------------
+STATE_FILE = "auto_maintain_state.json"
+
+def load_state():
+    if os.path.exists(STATE_FILE):
+        try:
+            with open(STATE_FILE, "r") as f:
+                return json.load(f)
+        except:
+            return {"patches": [], "restarts": 0}
+    return {"patches": [], "restarts": 0}
+
+def save_state(state):
+    with open(STATE_FILE, "w") as f:
+        json.dump(state, f, indent=2)
+
+@app.route("/admin/auto_dashboard")
+def auto_dashboard():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    state = load_state()
+    patches = state.get("patches", [])
+    restarts = state.get("restarts", 0)
+
+    errors = []
+    if os.path.exists("error.log"):
+        with open("error.log", "r") as f:
+            errors = f.readlines()[-50:]
+
+    logs = []
+    if os.path.exists("auto_maintain.log"):
+        with open("auto_maintain.log", "r") as f:
+            logs = f.readlines()[-200:]
+
+    for line in logs:
+        if "Patch applied" in line and line not in patches:
+            patches.append(line)
+        if "Flask started with PID" in line:
+            restarts += 1
+
+    state["patches"] = patches[-50:]
+    state["restarts"] = restarts
+    save_state(state)
+
+    health_score = 100
+    if any("Traceback" in line for line in errors):
+        health_score -= 30
+    if restarts > 2:
+        health_score -= 20
+    if len(patches) > 5:
+        health_score -= 10
+
+    return render_template(
+        "admin/auto_dashboard.html",
+        errors=errors[::-1],
+        patches=patches[::-1],
+        restarts=restarts,
+        health_score=health_score
+    )
+
+# ---------------------------
+# Auto-Maintain JSON State Endpoint
+# ---------------------------
+@app.route("/admin/auto_dashboard_state")
+def auto_dashboard_state():
+    if "user" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    state = load_state()
+    patches = state.get("patches", [])
+    restarts = state.get("restarts", 0)
+
+    # Get last 50 errors
+    errors = []
+    if os.path.exists("error.log"):
+        with open("error.log", "r") as f:
+            errors = f.readlines()[-50:]
+
+    # Calculate health score
+    health_score = 100
+    if any("Traceback" in line for line in errors):
+        health_score -= 30
+    if restarts > 2:
+        health_score -= 20
+    if len(patches) > 5:
+        health_score -= 10
+
+    return jsonify({
+        "patches": patches[-50:],
+        "restarts": restarts,
+        "errors": errors[::-1],  # newest first
+        "health_score": health_score
+    })
+
+
+@app.route("/admin/diagnostics")
+def diagnostics():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    logs = "No logs found."
+    try:
+        with open("error.log", "r") as f:
+            logs = f.read()[-5000:]
+    except:
+        pass
+
+    prompt = f"""
+    You are an expert Python/Flask debugging assistant.
+
+    Analyze these logs and explain:
+    - What caused the errors
+    - Where in the code they originate
+    - How to fix them
+    - Security/performance risks
+    """
+
+    try:
+        res = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            max_completion_tokens=300
+        )
+        analysis = getattr(res.choices[0].message, "content", "No analysis available.")
+    except Exception as e:
+        analysis = f"OpenAI Error: {e}"
+
+    return render_template("admin/diagnostics.html", logs=logs, analysis=analysis)
+
+@app.route("/admin/health")
+def health_check():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    size = os.path.getsize("error.log") if os.path.exists("error.log") else 0
+    stats = {
+        "error_file_size": size,
+        "recent_errors": size > 20000,
+        "status": "healthy" if size < 5000 else "unhealthy",
+    }
+
+    prompt = f"Rate the app health from 1–100 based on:\n{stats}"
+
+    try:
+        res = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            max_completion_tokens=200
+        )
+        report = getattr(res.choices[0].message, "content", "No report produced.")
+    except Exception as e:
+        report = f"Error generating report: {e}"
+
+    return report
+
+@app.route("/admin/pending_patches")
+def pending():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    text = ""
+    if os.path.exists("pending_patch.diff"):
+        with open("pending_patch.diff", "r") as f:
+            text = f.read()
+
+    return render_template("admin/pending_patches.html", patch_text=text)
+
+# ---------------------------
+# Quiz / Study Routes
+# ---------------------------
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -108,27 +395,25 @@ def login():
         username = request.form.get("username")
         user_id = request.form.get("user_id")
 
-        # Check if user exists
         user = User.query.filter_by(username=username, user_id=user_id).first()
         if not user:
-            # Create new user if not found
             user = User(username=username, user_id=user_id)
             db.session.add(user)
             db.session.commit()
 
-        # Store in session
         session["user"] = username
         session["user_id"] = user_id
-
         return redirect(url_for("home"))
 
-    return render_template("login.html")
+    return render_template("auth/login.html")
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("login"))
-
+@app.route("/home")
+def home():
+    quizzes = get_available_quizzes()
+    intro = ("Welcome to the Programming Language Quiz App! "
+             "Here you can take quizzes on Python, Java, and C++, "
+             "review study guides, and track your progress on the dashboard.")
+    return render_template("quiz/home.html", quizzes=quizzes, intro_paragraph=intro)
 
 @app.route("/quiz/<language>")
 def quiz_page(language):
@@ -142,56 +427,42 @@ def quiz_page(language):
         session["score"] = 0
         session["language"] = language
 
-    return render_template("quiz_ajax.html", language=language)
+    return render_template("quiz/quiz_ajax.html", language=language)
 
-
-@app.route("/quiz/<language>/get_question", methods=["GET"])
+@app.route("/quiz/<language>/get_question")
 def get_question(language):
     if "user" not in session:
         return redirect(url_for("login"))
 
     index = session.get("index", 0)
     questions = session.get("questions", [])
-    total_questions = len(questions)
-    current_score = session.get("score", 0)
+    total = len(questions)
+    score = session.get("score", 0)
 
-    # FINISHED CASE
-    if index >= total_questions:
-        user = User.query.filter_by(username=session['user'], user_id=session['user_id']).first()
+    if index >= total:
+        user = User.query.filter_by(username=session["user"], user_id=session["user_id"]).first()
         if user:
-            attempt = QuizAttempt(
-                score=current_score,
-                total_questions=total_questions,
-                language=language,
-                user_id_fk=user.id
-            )
+            attempt = QuizAttempt(score=score, total_questions=total,
+                                  language=language, user_id_fk=user.id)
             db.session.add(attempt)
             db.session.commit()
 
-        return jsonify({
-            "finished": True,
-            "score": current_score,
-            "total_questions": total_questions,
-            "question_number": total_questions
-        })
+        return jsonify({"finished": True, "score": score,
+                        "total_questions": total, "question_number": total})
 
-    # QUESTION CASE
-    question = questions[index]
-    options = question.get("options", [])
-
+    q = questions[index]
     return jsonify({
         "finished": False,
         "question_number": index + 1,
-        "total_questions": total_questions,
-        "question": question["question"],
-        "options": options,
+        "total_questions": total,
+        "question": q["question"],
+        "options": q.get("options", []),
         "language": language,
-        "score": current_score
+        "score": score
     })
 
-
 @app.route("/quiz/<language>/answer", methods=["POST"])
-def submit_answer(language):
+def answer(language):
     if "user" not in session:
         return redirect(url_for("login"))
 
@@ -200,74 +471,86 @@ def submit_answer(language):
 
     index = session.get("index", 0)
     questions = session.get("questions", [])
-    total_questions = len(questions)
+    total = len(questions)
 
-    # FINISHED CASE
-    if index >= total_questions:
-        return jsonify({
-            "finished": True,
-            "score": session.get("score", 0),
-            "total_questions": total_questions,
-            "question_number": total_questions
-        })
+    if index >= total:
+        return jsonify({"finished": True,
+                        "score": session.get("score", 0),
+                        "total_questions": total,
+                        "question_number": total})
 
-    question = questions[index]
-    correct = question.get("answer")
-    options = question.get("options", [])
+    q = questions[index]
+    correct = q.get("answer")
 
     if selected == correct:
         session["score"] += 1
 
-    explanation = generate_explanation(question["question"], selected, correct)
-
+    explanation = generate_explanation(q["question"], selected, correct)
     session["index"] += 1
 
     return jsonify({
         "finished": False,
         "question_number": index + 1,
-        "total_questions": total_questions,
+        "total_questions": total,
         "score": session.get("score", 0),
-        "question": question["question"],
-        "options": options,
+        "question": q["question"],
+        "options": q.get("options", []),
         "correct": correct,
-        "selected": selected,          # ← **FIXED**
+        "selected": selected,
         "explanation": explanation,
         "feedback_msg": "Correct!" if selected == correct else "Incorrect!"
     })
-
 
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect(url_for("login"))
+    user = User.query.filter_by(username=session["user"], user_id=session["user_id"]).first()
+    atts = user.attempts if user else []
+    return render_template("quiz/dashboard.html", attempts=atts)
 
-    user = User.query.filter_by(username=session['user'], user_id=session['user_id']).first()
-    attempts = user.attempts if user else []
-    return render_template("dashboard.html", attempts=attempts)
 
 @app.route("/")
 def index():
     return redirect(url_for("login"))
 
 @app.route("/study/python")
-def python_study():
+def study_py():
     if "user" not in session:
         return redirect(url_for("login"))
-    return render_template("python_study.html")
-
+    return render_template("study/python_study.html")
 
 @app.route("/study/cpp")
 def study_cpp():
     if "user" not in session:
         return redirect(url_for("login"))
-    return render_template("cpp_study.html")   # must match your file name exactly
-
+    return render_template("study/cpp_study.html")
 
 @app.route("/study/java")
 def study_java():
     if "user" not in session:
         return redirect(url_for("login"))
-    return render_template("java_study.html")  # must match your file name exactly
+    return render_template("study/java_study.html")
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+@app.route("/trigger_error")
+def trigger_error():
+    raise ValueError("This is a test error for auto-maintain")
+
+# Lazy import — safe even if broken
+try:
+    import broken_module
+except Exception as e:
+    print("Lazy import failed:", e)
+
+# ---------------------------
+# Run App
+# ---------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = 5001
+    print(f"Starting server on http://127.0.0.1:{port}")
+    app.run(host="0.0.0.0", port=port, debug=True)

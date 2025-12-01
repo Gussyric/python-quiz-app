@@ -44,14 +44,27 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
         });
 
+        // Add "Read Aloud" button
         questionBox.innerHTML = `
-            <p><strong>${data.question}</strong></p>
+            <p id="current-question"><strong>${data.question}</strong></p>
+            <button id="read-aloud-btn">🔊 Read Aloud</button>
             <form id="quiz-form">
                 ${optionsHtml}
                 <button type="submit">Submit Answer</button>
             </form>
             <div id="feedback"></div>
         `;
+
+        // Read aloud functionality
+        const readBtn = document.getElementById("read-aloud-btn");
+        readBtn.addEventListener("click", () => {
+            const questionText = document.getElementById("current-question").textContent;
+            const msg = new SpeechSynthesisUtterance(questionText);
+            msg.rate = 1;
+            msg.pitch = 1;
+            msg.lang = 'en-US';
+            window.speechSynthesis.speak(msg);
+        });
 
         document.getElementById("quiz-form").addEventListener("submit", submitAnswer);
     }

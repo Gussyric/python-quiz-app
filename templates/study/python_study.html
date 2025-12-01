@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python Study Guide</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Python Study Guide{% endblock %}
+
+{% block content %}
 <div class="container">
-    <!-- Back button at the top -->
     <a href="{{ url_for('home') }}" class="btn">⬅ Back to Home</a>
+
     <h1 class="app-heading">📘 Python Study Guide</h1>
     <p>Review the fundamentals below before taking the quiz.</p>
 
@@ -88,7 +83,7 @@
     <ul>
         <li>Handle errors with try: ... except: ...</li>
     </ul>
-    <a href="https://www.tutorialspoint.com/python/python_oops_concepts.htm" target="_blank" class="btn">Read More</a>
+    <a href="https://www.tutorialspoint.com/python/python_exceptions.htm" target="_blank" class="btn">Read More</a>
 
     <h2>9. Built-in Functions & Modules</h2>
     <ul>
@@ -101,9 +96,6 @@
 
     <br><br>
     <a href="{{ url_for('quiz_page', language='python') }}" class="btn">Start Python Quiz ➜</a>
-    <!-- Back button at the top -->
     <a href="{{ url_for('home') }}" class="btn">⬅ Back to Home</a>
-    
 </div>
-</body>
-</html>
+{% endblock %}

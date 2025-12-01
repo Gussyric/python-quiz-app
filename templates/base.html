@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Quiz App{% endblock %}</title>
+
+    <!-- Global Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        body {
+            background: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: auto;
+            padding-top: 30px;
+        }
+
+        /* Header Navigation Bar */
+        nav {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        nav .btn {
+            margin-right: 10px;
+        }
+
+        /* Page Heading */
+        .app-heading {
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .intro-text {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        /* Universal Button Style */
+        a.btn, button.btn {
+            display: inline-block;
+            background: #880397;
+            color: white !important;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none !important;
+            font-weight: 600;
+            margin: 6px 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        a.btn:hover, button.btn:hover {
+            background: #a33abf;
+            transform: scale(1.05);
+        }
+
+        /* Home Quiz Buttons */
+        #home-quiz-container .home-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            justify-items: center;
+            margin-top: 30px;
+        }
+
+        .quiz-btn, .study-btn {
+            width: 180px;
+            text-align: center;
+            background-color: #880397 !important;
+            color: white !important;
+        }
+
+        .study-btn:disabled {
+            background-color: #6c757d; /* grey for disabled buttons */
+            cursor: not-allowed;
+        }
+
+        /* Quiz options */
+        .option {
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 5px;
+            background: #222;
+            transition: transform .2s, background .2s;
+        }
+
+        .option:hover {
+            transform: scale(1.03);
+            background: #333;
+        }
+
+        .correct {
+            background-color: #2e7d32 !important;
+        }
+
+        .incorrect {
+            background-color: #c62828 !important;
+        }
+
+        #quiz-form button {
+            background-color: #880397;   /* purple */
+            color: white;
+        }
+
+        #quiz-form button:hover {
+            background-color: #a33abf;   /* lighter purple */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- TOP NAV BAR -->
+        <nav>
+            {% if session.get('user') %}
+                <a href="{{ url_for('home') }}" class="btn">🏠 Home</a>
+                <a href="{{ url_for('dashboard') }}" class="btn">📊 Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="btn">🚪 Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn">🔐 Login</a>
+            {% endif %}
+        </nav>
+
+        <!-- Intro Paragraph & Read Aloud Button -->
+        {% if session.get('user') %}
+        <div id="intro-container">
+            <p id="welcome-text">Welcome, {{ session['user'] }}!</p>
+            <p id="intro-text" class="intro-text">
+                Welcome to the Programming Language Quiz App! Here you can take quizzes on Python, Java, and C++, review study guides, and track your progress on the dashboard.
+            </p>
+            <button id="read-intro-btn" class="btn">🔊 Read Aloud</button>
+        </div>
+        {% endif %}
+
+        <!-- Main Page Content -->
+        {% block content %}{% endblock %}
+        
+    </div>
+
+    <!-- Read Aloud Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const readBtn = document.getElementById("read-intro-btn");
+            if (!readBtn) return;
+
+            let isReading = false;
+            let utterance;
+
+            readBtn.addEventListener("click", () => {
+                const introText = document.getElementById("intro-text")?.textContent ?? "";
+                const welcomeText = document.getElementById("welcome-text")?.textContent ?? "";
+                const combinedText = `${welcomeText} ${introText}`;
+
+                if (!isReading) {
+                    // Start reading
+                    if ('speechSynthesis' in window && combinedText) {
+                        utterance = new SpeechSynthesisUtterance(combinedText);
+                        utterance.rate = 1;
+                        utterance.pitch = 1;
+                        utterance.lang = 'en-US';
+                        window.speechSynthesis.speak(utterance);
+                        isReading = true;
+                        readBtn.textContent = "⏹ Stop Reading";
+                        
+                        // Reset state when finished
+                        utterance.onend = () => {
+                            isReading = false;
+                            readBtn.textContent = "🔊 Read Aloud";
+                        };
+                    } else {
+                        alert("Text-to-speech not supported in this browser.");
+                    }
+                } else {
+                    // Stop reading
+                    window.speechSynthesis.cancel();
+                    isReading = false;
+                    readBtn.textContent = "🔊 Read Aloud";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

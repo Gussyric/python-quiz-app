@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}Auto-Maintain Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="app-heading">Auto-Maintain Dashboard</h1>
+
+<p><strong>App Health Score:</strong> <span id="health-score">{{ health_score }}</span>/100</p>
+
+<hr>
+
+<h2>Recent Errors</h2>
+<div id="errors-container" style="max-height: 300px; overflow-y: auto; background: #222; padding: 10px; border-radius: 8px;">
+    {% if errors %}
+        <ul id="errors-list">
+            {% for err in errors %}
+                <li style="margin-bottom:5px; color: #ff5555;">{{ err }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No recent errors.</p>
+    {% endif %}
+</div>
+
+<hr>
+
+<h2>Applied Patches</h2>
+<div id="patches-container" style="max-height: 200px; overflow-y: auto; background: #222; padding: 10px; border-radius: 8px;">
+    {% if patches %}
+        <ul>
+            {% for patch in patches %}
+                <li style="margin-bottom:5px;" {% if loop.first %}class="new-patch"{% endif %}>{{ patch }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No patches applied yet.</p>
+    {% endif %}
+</div>
+
+<hr>
+
+<h2>Flask Restarts</h2>
+<p id="restarts">{{ restarts }}</p>
+
+<hr>
+
+<h2>Apply Patch Manually</h2>
+<form id="apply-patch-form">
+    <label for="file">File to Patch:</label>
+    <input type="text" name="file" id="file" placeholder="e.g., app.py" required style="width:100%; padding:8px; margin-bottom:8px;">
+    
+    <label for="patch">Patch (Unified Diff):</label>
+    <textarea name="patch" id="patch" placeholder="Paste your diff here..." required
+              style="width:100%; height:150px; padding:8px; margin-bottom:8px;"></textarea>
+    
+    <button type="submit" class="btn">Apply Patch</button>
+</form>
+
+<hr>
+
+<h2>Auto-Fix a File</h2>
+<form id="auto-fix-form">
+    <label for="auto-file">File to Auto-Fix:</label>
+    <input type="text" name="file" id="auto-file" placeholder="e.g., app.py" required style="width:100%; padding:8px; margin-bottom:8px;">
+    
+    <button type="submit" class="btn">Auto-Fix File</button>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const applyForm = document.getElementById("apply-patch-form");
+    const autoForm = document.getElementById("auto-fix-form");
+
+    const patchesContainer = document.getElementById("patches-container");
+    const errorsContainer = document.getElementById("errors-container");
+    const restartsElem = document.getElementById("restarts");
+    const healthScoreElem = document.getElementById("health-score");
+
+    // --------------------------
+    // Helper: reload dashboard state
+    // --------------------------
+async function reloadDashboard() {
+    try {
+        const res = await fetch("/admin/auto_dashboard_state");
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Update patches
+        if (data.patches.length) {
+            patchesContainer.innerHTML = "<ul>" + 
+                data.patches.map((p, idx) => 
+                    `<li class="new-patch" style="margin-bottom:5px; color:#88ff88;">
+                        <strong>${p.file}</strong> @ ${p.time}
+                        <pre>${p.patch}</pre>
+                    </li>`
+                ).join("") + "</ul>";
+        } else {
+            patchesContainer.innerHTML = "<p>No patches applied yet.</p>";
+        }
+
+        // Update errors
+        if (data.errors.length) {
+            errorsContainer.innerHTML = "<ul>" + 
+                data.errors.map(e => `<li style='margin-bottom:5px; color:#ff5555;'>${e}</li>`).join("") + 
+            "</ul>";
+        } else {
+            errorsContainer.innerHTML = "<p>No recent errors.</p>";
+        }
+
+        // Update restarts and health
+        restartsElem.textContent = data.restarts;
+        healthScoreElem.textContent = data.health_score;
+    } catch (err) {
+        console.error("Failed to reload dashboard:", err);
+    }
+}
+
+    // --------------------------
+    // Apply Patch AJAX
+    // --------------------------
+    applyForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(applyForm);
+        const payload = Object.fromEntries(formData.entries());
+
+        const res = await fetch("/admin/apply_patch", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            alert("Patch applied successfully!");
+            await reloadDashboard(); // refresh dashboard state
+        } else {
+            alert("Error applying patch.");
+        }
+    });
+
+    // --------------------------
+    // Auto-Fix AJAX
+    // --------------------------
+    autoForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(autoForm);
+        const payload = Object.fromEntries(formData.entries());
+
+        const res = await fetch("/admin/auto_fix", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            alert("Auto-Fix applied successfully!");
+            await reloadDashboard(); // refresh dashboard state
+        } else {
+            alert("Error performing auto-fix.");
+        }
+    });
+
+    // --------------------------
+    // Optional: auto-refresh every 10 seconds
+    // --------------------------
+    setInterval(reloadDashboard, 10000);
+});
+</script>
+
+{% endblock %}
