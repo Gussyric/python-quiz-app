@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-selfheal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-selfheal
+  template:
+    metadata:
+      labels:
+        app: flask-selfheal
+    spec:
+      containers:
+      - name: flask-container
+        image: guscott/flask-selfheal:latest
+        imagePullPolicy: Never   # Use local Minikube image
+        ports:
+        - containerPort: 5001
+        env:
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openai-secret
+              key: OPENAI_API_KEY
+        livenessProbe:
+          httpGet:
+            path: /health    # Safe endpoint
+            port: 5001
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health    # Safe endpoint
+            port: 5001
+          initialDelaySeconds: 3
+          periodSeconds: 5

@@ -11,6 +11,8 @@ import difflib
 import time
 import sys
 
+app = Flask(__name__)
+app.secret_key = "your_secret_key"
 
 # ---------------------------
 # Logging Setup
@@ -24,8 +26,10 @@ logging.basicConfig(
 # ---------------------------
 # Flask App Setup
 # ---------------------------
-app = Flask(__name__)
-app.secret_key = "your_secret_key"
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise RuntimeError("OPENAI_API_KEY not found in environment!")
+client = OpenAI(api_key=api_key)
 
 # Ensure instance folder exists
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -61,7 +65,7 @@ with app.app_context():
 # ---------------------------
 # OpenAI Client
 # ---------------------------
-client = OpenAI(api_key=API_KEY)
+# client = OpenAI(api_key=API_KEY)
 
 # ---------------------------
 # Utility Functions
@@ -125,34 +129,36 @@ def auto_fix():
     if "user" not in session:
         return jsonify({"error": "Unauthorized"}), 401
 
-    # Support JSON or form submission
+    # Support both JSON and form requests
     if request.is_json:
         file_path = request.json.get("file")
     else:
         file_path = request.form.get("file")
-        
+
     if not file_path or not os.path.exists(file_path):
         return jsonify({"error": "Invalid file path"}), 400
 
-    # Read the file
+    # --- Read the target source file ---
     try:
         with open(file_path, "r") as f:
             code = f.read()
     except Exception as e:
         return jsonify({"error": f"Error reading file: {e}"}), 500
 
-    # Read last 5k of error log
+    # --- Read last 5k of error.log for context ---
     try:
         with open("error.log", "r") as f:
             error_log = f.read()[-5000:]
     except:
         error_log = "No error logs available."
 
-    # Generate patch using OpenAI
+    # --- OpenAI prompt ---
     prompt = f"""
     You are an expert software engineer.
 
-    Given the Python/Flask code and error logs:
+    Based on the following Python/Flask code and error logs,
+    produce ONLY a unified diff patch. The patch must follow
+    standard 'diff -u' format and must not include explanations.
 
     Code:
     {code}
@@ -160,8 +166,10 @@ def auto_fix():
     Errors:
     {error_log}
 
-    Produce ONLY a unified diff patch.
+    Output only the patch.
     """
+
+    # --- Generate patch from OpenAI ---
     try:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -172,21 +180,59 @@ def auto_fix():
         print("\n=== AUTO FIX GENERATED PATCH ===\n", patch, "\n=== END PATCH ===\n")
     except Exception as e:
         patch = f"OpenAI Error: {e}"
+        return jsonify({"error": patch}), 500
 
-    # --- Apply patch ---
+    # ==========================================================
+    #                  PATCH VALIDATION + APPLY
+    # ==========================================================
+
+    # Patch MUST start with correct header
+    if not patch.startswith(f"--- {file_path}"):
+        return jsonify({
+            "error": "Patch rejected: invalid diff header.",
+            "patch": patch
+        }), 400
+
+    # Must contain @@ hunk unless empty diff
+    if "@@" not in patch and patch.strip() != f"--- {file_path}\n+++ {file_path}":
+        return jsonify({
+            "error": "Patch rejected: missing @@ diff hunk.",
+            "patch": patch
+        }), 400
+
+    import difflib
+
+    original_lines = open(file_path).read().splitlines(keepends=True)
+    patch_lines = patch.splitlines(keepends=True)
+
+    # Apply patch
     try:
-        with open(file_path, "r") as f:
-            original = f.readlines()
-        patched_lines = difflib.restore(patch.splitlines(), 1)
+        patched_lines = difflib.patch_from_unified_diff(patch_lines, original_lines)
+    except Exception as e:
+        return jsonify({
+            "error": f"Patch parsing failed: {e}",
+            "patch": patch
+        }), 500
+
+    if patched_lines is None:
+        return jsonify({
+            "error": "Failed to apply patch (patch returned None).",
+            "patch": patch
+        }), 500
+
+    # Write patched file
+    try:
         with open(file_path, "w") as f:
             f.writelines(patched_lines)
         apply_status = "ok"
     except Exception as e:
-        apply_status = f"Failed to apply patch: {e}"
+        apply_status = f"Failed to write patched file: {e}"
 
-    # --- Reload module dynamically ---
+    # ==========================================================
+    #                      MODULE RELOAD
+    # ==========================================================
     module_name = os.path.splitext(os.path.basename(file_path))[0]
-    reload_status = ""
+
     if apply_status == "ok":
         if module_name in sys.modules:
             try:
@@ -196,18 +242,23 @@ def auto_fix():
                 reload_status = f"Failed to reload module {module_name}: {e}"
         else:
             reload_status = f"Module {module_name} not imported yet, will load on first import."
+    else:
+        reload_status = "Module reload skipped due to patch failure."
 
-    # --- Save patch to dashboard state ---
+    # ==========================================================
+    #                 SAVE PATCH TO STATE HISTORY
+    # ==========================================================
     state = load_state()
-    state_patches = state.get("patches", [])
-    state_patches.append({
+    patches = state.get("patches", [])
+
+    patches.append({
         "file": file_path,
         "time": time.strftime('%Y-%m-%d %H:%M:%S'),
         "patch": patch
     })
-    state["patches"] = state_patches[-50:]
+
+    state["patches"] = patches[-50:]
     save_state(state)
-    # -----------------------------------------
 
     return jsonify({
         "file": file_path,
@@ -215,6 +266,7 @@ def auto_fix():
         "apply_status": apply_status,
         "reload_status": reload_status
     })
+
 # ---------------------------
 # Dashboard State
 # ---------------------------
@@ -347,20 +399,23 @@ def diagnostics():
 
     return render_template("admin/diagnostics.html", logs=logs, analysis=analysis)
 
+@app.route("/health")
+def health():
+    # Always returns 200 OK
+    return "OK", 200
+
+# Keep your existing /admin/health if needed for admin dashboard
 @app.route("/admin/health")
-def health_check():
+def admin_health():
     if "user" not in session:
         return redirect(url_for("login"))
-
     size = os.path.getsize("error.log") if os.path.exists("error.log") else 0
     stats = {
         "error_file_size": size,
         "recent_errors": size > 20000,
         "status": "healthy" if size < 5000 else "unhealthy",
     }
-
     prompt = f"Rate the app health from 1–100 based on:\n{stats}"
-
     try:
         res = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -370,7 +425,6 @@ def health_check():
         report = getattr(res.choices[0].message, "content", "No report produced.")
     except Exception as e:
         report = f"Error generating report: {e}"
-
     return report
 
 @app.route("/admin/pending_patches")
@@ -553,4 +607,4 @@ except Exception as e:
 if __name__ == "__main__":
     port = 5001
     print(f"Starting server on http://127.0.0.1:{port}")
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=False)
