@@ -1,16 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-
     <h1 class="app-heading">Programming Language Quiz App</h1>
 
-    <p>Welcome, {{ session['user'] }}!</p>
+    <p>Welcome to the Quiz App!</p>
 
     <h2>Select a Quiz</h2>
 
     <div id="home-quiz-container">
         <div class="home-buttons">
-
             <!-- Quiz Buttons -->
             <a href="{{ url_for('quiz_page', language='python') }}" class="btn quiz-btn">Python Quiz</a>
             <a href="{{ url_for('quiz_page', language='java') }}" class="btn quiz-btn">Java Quiz</a>
@@ -26,8 +24,6 @@
     <br>
 
     <a href="{{ url_for('dashboard') }}" class="btn">View Dashboard</a>
-    <a href="{{ url_for('logout') }}" class="btn">Logout</a>
-
 </div>
 
 <div class="tts-toggle-container">
@@ -36,5 +32,4 @@
         Enable Read Aloud
     </label>
 </div>
-
 {% endblock %}

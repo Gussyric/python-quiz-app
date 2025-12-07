@@ -128,15 +128,15 @@
     <div class="container">
 
         <!-- TOP NAV BAR -->
-        <nav>
+         <nav>
             {% if session.get('user') %}
                 <a href="{{ url_for('home') }}" class="btn">🏠 Home</a>
                 <a href="{{ url_for('dashboard') }}" class="btn">📊 Dashboard</a>
-                <a href="{{ url_for('logout') }}" class="btn">🚪 Logout</a>
             {% else %}
-                <a href="{{ url_for('login') }}" class="btn">🔐 Login</a>
+                <a href="{{ url_for('home') }}" class="btn">🏠 Home</a>
             {% endif %}
         </nav>
+
 
         <!-- Intro Paragraph & Read Aloud Button -->
         {% if session.get('user') %}

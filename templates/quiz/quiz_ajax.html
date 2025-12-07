@@ -9,54 +9,55 @@
 </div>
 
 <script>
-loadQuestion();
+// Use the questions passed from Flask directly
+let questions = {{ questions|tojson }};
+let currentIndex = 0;
+let score = 0;
 
-function loadQuestion() {
-    fetch(`/quiz/{{ language }}/get_question`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.finished) {
-                document.getElementById("quiz-box").innerHTML = `
-                    <h2>Finished!</h2>
-                    <p>Your Score: ${data.score}/${data.total_questions}</p>`;
-                return;
-            }
+function showQuestion() {
+    if (currentIndex >= questions.length) {
+        document.getElementById("quiz-box").innerHTML = `
+            <h2>Quiz Finished!</h2>
+            <p>Your Score: ${score} / ${questions.length}</p>
+            <a href="{{ url_for('home') }}" class="btn">Back to Home</a>
+        `;
+        return;
+    }
 
-            let html = `
-                <h2>Question ${data.question_number}/${data.total_questions}</h2>
-                <p>${data.question}</p>
-                <ul>
-            `;
+    const q = questions[currentIndex];
+    let html = `
+        <h2>Question ${currentIndex + 1} / ${questions.length}</h2>
+        <p>${q.question}</p>
+        <ul>
+    `;
 
-            data.options.forEach(o => {
-                html += `<li><button onclick="submitAnswer('${o}')">${o}</button></li>`;
-            });
-
-            html += `</ul>`;
-            document.getElementById("quiz-box").innerHTML = html;
-        });
-}
-
-function submitAnswer(opt) {
-    fetch(`/quiz/{{ language }}/answer`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({selected: opt})
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.finished) {
-            loadQuestion();
-        } else {
-            document.getElementById("quiz-box").innerHTML = `
-                <h2>${data.feedback_msg}</h2>
-                <p><strong>Correct Answer:</strong> ${data.correct}</p>
-                <p>${data.explanation}</p>
-                <button onclick="loadQuestion()">Next Question</button>
-            `;
-        }
+    q.options.forEach(opt => {
+        html += `<li><button onclick="submitAnswer('${opt}', '${q.answer}')">${opt}</button></li>`;
     });
-}
-</script>
 
+    html += `</ul>`;
+    document.getElementById("quiz-box").innerHTML = html;
+}
+
+function submitAnswer(selected, correct) {
+    // Update score
+    if (selected === correct) score++;
+
+    // Show explanation
+    const explanation = `The correct answer is: ${correct}`;
+    document.getElementById("quiz-box").innerHTML = `
+        <h2>${selected === correct ? "Correct!" : "Incorrect!"}</h2>
+        <p>${explanation}</p>
+        <button onclick="nextQuestion()">Next Question</button>
+    `;
+}
+
+function nextQuestion() {
+    currentIndex++;
+    showQuestion();
+}
+
+// Start quiz
+document.addEventListener("DOMContentLoaded", showQuestion);
+</script>
 {% endblock %}
