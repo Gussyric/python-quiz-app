@@ -35,7 +35,7 @@
     {"question":"Which built-in function returns the maximum value?","options":["max()","min()","top()","largest()"],"answer":"max()","explanation":"max() returns the largest value in a sequence."},
     {"question":"What does import math do?","options":["Imports math module","Defines math functions","Starts calculator","Nothing"],"answer":"Imports math module","explanation":"import math gives access to the math module functions."},
     {"question":"Which function converts a value to float?","options":["float()","int()","str()","double()"],"answer":"float()","explanation":"float() converts a value to a floating-point number."},
-    {"question":"What is the output of print(type(3.5))?","options":["<class 'float'>","<class 'int'>","<class 'double'>","<class 'number'>"],"answer":"<class 'float'>","explanation":"3.5 is a floating-point number."},
+    {"question":"What is the output of print(type(3.5))?","options":["<class 'float'>","<class 'int'>","<class 'double'>","<class 'number'>"],"answer":"<class 'float'>","explanation":"3.5 is a floating-point number."},    
     {"question":"Which keyword exits a function and returns a value?","options":["return","break","exit","yield"],"answer":"return","explanation":"return exits a function and optionally passes back a value."},
     {"question":"Which operator is used for floor division?","options":["//","/","%","**"],"answer":"//","explanation":"// returns the quotient without the remainder."},
     {"question":"Which statement does nothing?","options":["pass","continue","break","noop"],"answer":"pass","explanation":"pass is a null statement; it does nothing."},

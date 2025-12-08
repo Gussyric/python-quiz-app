@@ -4,13 +4,10 @@
 {% block content %}
 <h1>{{ language | capitalize }} Quiz</h1>
 
-<div id="quiz-box">
-    Loading...
-</div>
+<div id="quiz-box">Loading...</div>
 
 <script>
-// Use the questions passed from Flask directly
-let questions = {{ questions|tojson }};
+const questions = {{ questions|tojson }};
 let currentIndex = 0;
 let score = 0;
 
@@ -25,39 +22,70 @@ function showQuestion() {
     }
 
     const q = questions[currentIndex];
-    let html = `
+    const quizBox = document.getElementById("quiz-box");
+
+    quizBox.innerHTML = `
         <h2>Question ${currentIndex + 1} / ${questions.length}</h2>
         <p>${q.question}</p>
-        <ul>
+        <ul id="options-list"></ul>
     `;
+
+    const ul = document.getElementById("options-list");
 
     q.options.forEach(opt => {
-        html += `<li><button onclick="submitAnswer('${opt}', '${q.answer}')">${opt}</button></li>`;
-    });
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.className = "btn";
 
-    html += `</ul>`;
-    document.getElementById("quiz-box").innerHTML = html;
+        btn.addEventListener("click", () => {
+            console.log("Button clicked:", opt); // Browser console debug
+
+            submitAnswer(opt, q.answer, q.options);
+        });
+
+        li.appendChild(btn);
+        ul.appendChild(li);
+    });
 }
 
-function submitAnswer(selected, correct) {
-    // Update score
+function submitAnswer(selected, correct, options) {
     if (selected === correct) score++;
 
-    // Show explanation
-    const explanation = `The correct answer is: ${correct}`;
-    document.getElementById("quiz-box").innerHTML = `
-        <h2>${selected === correct ? "Correct!" : "Incorrect!"}</h2>
-        <p>${explanation}</p>
-        <button onclick="nextQuestion()">Next Question</button>
-    `;
+    const quizBox = document.getElementById("quiz-box");
+
+    // Fetch AI-generated explanation from Flask
+    fetch(`/quiz/{{ language }}/answer`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            question: questions[currentIndex].question,
+            selected: selected,
+            correct: correct,
+            options: options
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const explanation = data.explanation.replace(/\n/g, "<br>"); // Preserve line breaks
+        quizBox.innerHTML = `
+            <h2>${data.feedback_msg}</h2>
+            <p><strong>Correct Answer:</strong> ${data.correct}</p>
+            <div>${explanation}</div>
+            <button class="btn" id="next-btn">Next Question</button>
+        `;
+
+        document.getElementById("next-btn").addEventListener("click", () => {
+            currentIndex++;
+            showQuestion();
+        });
+    })
+    .catch(err => {
+        console.error("Error fetching explanation:", err);
+        quizBox.innerHTML += `<p>Could not load explanation. Please try again.</p>`;
+    });
 }
 
-function nextQuestion() {
-    currentIndex++;
-    showQuestion();
-}
-
-// Start quiz
 document.addEventListener("DOMContentLoaded", showQuestion);
 </script>
 {% endblock %}

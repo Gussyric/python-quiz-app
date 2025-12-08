@@ -67,25 +67,41 @@ def get_available_quizzes():
     quiz_folder = os.path.join(os.getcwd(), "questions")
     return [f.replace(".json", "") for f in os.listdir(quiz_folder) if f.endswith(".json")]
 
-def generate_explanation(question_text, user_answer, correct_answer):
+def generate_explanation(question_text, user_answer, correct_answer, all_options):
+    """
+    Generate a detailed explanation for a multiple-choice question.
+    The explanation will describe:
+    - Why the correct answer is correct
+    - Why each incorrect option is wrong
+    - Why the user's selected answer may be incorrect
+    """
     prompt = f"""
     Question: {question_text}
+    Options: {all_options}
     Correct Answer: {correct_answer}
     User Selected: {user_answer}
 
-    Explain briefly why the correct answer is correct and why the user's choice may be incorrect.
+    Explain in detail:
+    1. Why the correct answer is correct.
+    2. For each incorrect option, explain why it is wrong.
+    3. Why the user's selected answer may be incorrect (if not correct).
+
+    Format the explanation using plain text headings like:
+    1. Why the correct answer is correct:
+    2. For each incorrect option, explain why it is wrong:
+    3. Why the user's selected answer may be incorrect:
+
+    Do NOT use any asterisks or Markdown formatting.
+    Keep it clean and readable.
     """
+
     try:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            max_completion_tokens=120,
-            stream=True
+            max_completion_tokens=500
         )
-        explanation = ""
-        for event in response:
-            if hasattr(event.choices[0].delta, "content") and event.choices[0].delta.content:
-                explanation += event.choices[0].delta.content
+        explanation = getattr(response.choices[0].message, "content", "No explanation returned.")
     except Exception:
         explanation = "No explanation available. Please try again."
 
@@ -153,7 +169,7 @@ def auto_fix():
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            max_completion_tokens=400
+            max_completion_tokens=500
         )
         patch = getattr(response.choices[0].message, "content", "No patch returned.")
         print("\n=== PATCH GENERATED ===\n", patch, "\n======================\n")
@@ -238,7 +254,7 @@ def diagnostics():
         res = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            max_completion_tokens=250
+            max_completion_tokens=500
         )
         analysis = res.choices[0].message.content
     except:
@@ -275,7 +291,15 @@ def quiz_page(language):
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    attempts = QuizAttempt.query.all()
+    return render_template("dashboard.html", attempts=attempts)
+
+@app.route("/log_click", methods=["POST"])
+def log_click():
+    data = request.get_json()
+    option = data.get("option")
+    print(f"[CLICK] Option clicked: {option}")  # terminal output
+    return jsonify({"status": "ok"})
 
 @app.route("/quiz/<language>/get_question")
 def get_question(language):
@@ -301,8 +325,9 @@ def answer(language):
     question_text = data.get("question")
     selected = data.get("selected")
     correct = data.get("correct")
+    options = data.get("options", [])
 
-    explanation = generate_explanation(question_text, selected, correct)
+    explanation = generate_explanation(question_text, selected, correct, options)
 
     return jsonify({
         "correct": correct,
