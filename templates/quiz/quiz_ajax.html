@@ -54,7 +54,6 @@ function submitAnswer(selected, correct, options) {
 
     const quizBox = document.getElementById("quiz-box");
 
-    // Fetch AI-generated explanation from Flask
     fetch(`/quiz/{{ language }}/answer`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -67,11 +66,18 @@ function submitAnswer(selected, correct, options) {
     })
     .then(res => res.json())
     .then(data => {
-        const explanation = data.explanation.replace(/\n/g, "<br>"); // Preserve line breaks
+        // Automatically format AI explanation into numbered bullets
+        const explanationFormatted = formatExplanation(data.explanation);
+
         quizBox.innerHTML = `
-            <h2>${data.feedback_msg}</h2>
+            <h2>${data.selected === data.correct ? "Correct!" : "Incorrect!"}</h2>
             <p><strong>Correct Answer:</strong> ${data.correct}</p>
-            <div>${explanation}</div>
+            <div style="margin-top: 10px;">
+                ${explanationFormatted}
+            </div>
+            <p style="font-size: 0.85em; color: #ccc; margin-top: 8px;">
+                Note: Explanations are AI-generated for educational purposes.
+            </p>
             <button class="btn" id="next-btn">Next Question</button>
         `;
 
@@ -79,11 +85,35 @@ function submitAnswer(selected, correct, options) {
             currentIndex++;
             showQuestion();
         });
-    })
-    .catch(err => {
-        console.error("Error fetching explanation:", err);
-        quizBox.innerHTML += `<p>Could not load explanation. Please try again.</p>`;
     });
+}
+
+// Helper function to convert AI explanation text into bullet lists
+function formatExplanation(text) {
+    // Split by numbered sections (1., 2., 3.) and create <ol> list
+    const sections = text.split(/\d+\.\s+/).filter(s => s.trim() !== "");
+    let html = "<ol>";
+    sections.forEach(section => {
+        // Further split into lines starting with "- " for nested bullets
+        const lines = section.trim().split(/\n-\s+/).map(l => l.trim()).filter(l => l !== "");
+        html += "<li>";
+        if (lines.length > 0) {
+            html += "<ul>";
+            lines.forEach((line, i) => {
+                if (i === 0) {
+                    html += `<li>${line}</li>`; // main section first line
+                } else {
+                    html += `<li>${line}</li>`;
+                }
+            });
+            html += "</ul>";
+        } else {
+            html += section.trim();
+        }
+        html += "</li>";
+    });
+    html += "</ol>";
+    return html;
 }
 
 document.addEventListener("DOMContentLoaded", showQuestion);

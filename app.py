@@ -328,6 +328,10 @@ def answer(language):
     options = data.get("options", [])
 
     explanation = generate_explanation(question_text, selected, correct, options)
+    # Remove leading/trailing whitespace and normalize line starts
+    lines = explanation.splitlines()
+    lines = [line.lstrip() for line in lines]  # remove indentation
+    explanation = "\n".join(lines)
 
     return jsonify({
         "correct": correct,
