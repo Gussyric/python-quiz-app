@@ -131,7 +131,6 @@
         <nav>
             {% if session.get('user') %}
                 <a href="{{ url_for('home') }}" class="btn">🏠 Home</a>
-                <a href="{{ url_for('dashboard') }}" class="btn">📊 Dashboard</a>
             {% else %}
                 <a href="{{ url_for('home') }}" class="btn">🏠 Home</a>
             {% endif %}

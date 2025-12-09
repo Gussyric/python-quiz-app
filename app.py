@@ -66,45 +66,54 @@ def get_available_quizzes():
     quiz_folder = os.path.join(os.getcwd(), "questions")
     return [f.replace(".json", "") for f in os.listdir(quiz_folder) if f.endswith(".json")]
 
+
 def generate_explanation(question_text, user_answer, correct_answer, all_options):
     """
     Generate a detailed explanation for a multiple-choice question.
-    The explanation will describe:
-    - Why the correct answer is correct
-    - Why each incorrect option is wrong
-    - Why the user's selected answer may be incorrect
+    This version:
+    - Uses gpt-4o for more complete responses
+    - Increases max tokens to reduce truncation
+    - Provides fallback text if the API fails
+    - Cleans up leading whitespace and formatting
     """
+    # Make sure options are a string for the prompt
+    options_str = ", ".join(all_options) if isinstance(all_options, list) else str(all_options)
+
     prompt = f"""
-    Question: {question_text}
-    Options: {all_options}
-    Correct Answer: {correct_answer}
-    User Selected: {user_answer}
+Question: {question_text}
+Options: {options_str}
+Correct Answer: {correct_answer}
+User Selected: {user_answer}
 
-    Explain in detail:
-    1. Why the correct answer is correct.
-    2. For each incorrect option, explain why it is wrong.
-    3. Why the user's selected answer may be incorrect (if not correct).
+Explain in detail:
+1. Why the correct answer is correct:
+2. For each incorrect option, explain why it is wrong:
+3. Why the user's selected answer may be incorrect:
 
-    Format the explanation using plain text headings like:
-    1. Why the correct answer is correct:
-    2. For each incorrect option, explain why it is wrong:
-    3. Why the user's selected answer may be incorrect:
-
-    Do NOT use any asterisks or Markdown formatting.
-    Keep it clean and readable.
-    """
+Format in plain text. Do NOT use markdown or asterisks.
+"""
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o",  # use gpt-4o for better completions
             messages=[{"role": "user", "content": prompt}],
-            max_completion_tokens=500
+            max_completion_tokens=800
         )
-        explanation = getattr(response.choices[0].message, "content", "No explanation returned.")
-    except Exception:
+
+        explanation = getattr(response.choices[0].message, "content", "").strip()
+        # Ensure no leading whitespace on each line
+        explanation = "\n".join(line.lstrip() for line in explanation.splitlines())
+
+        # If explanation is empty, provide fallback
+        if not explanation:
+            explanation = "No detailed explanation available. Please review the correct answer carefully."
+
+    except Exception as e:
+        print("OpenAI API call failed:", e)
         explanation = "No explanation available. Please try again."
 
-    return explanation.strip()
+    return explanation
+
 
 def load_questions(language, num_questions=10):
     with open(f"questions/{language}.json") as f:
@@ -288,10 +297,6 @@ def quiz_page(language):
     score = 0
     return render_template("quiz/quiz_ajax.html", language=language, questions=questions, index=index, score=score)
 
-@app.route("/dashboard")
-def dashboard():
-    attempts = QuizAttempt.query.all()
-    return render_template("dashboard.html", attempts=attempts)
 
 @app.route("/log_click", methods=["POST"])
 def log_click():
@@ -321,16 +326,31 @@ def get_question(language):
 @app.route("/quiz/<language>/answer", methods=["POST"])
 def answer(language):
     data = request.get_json()
+
     question_text = data.get("question")
     selected = data.get("selected")
     correct = data.get("correct")
     options = data.get("options", [])
 
     explanation = generate_explanation(question_text, selected, correct, options)
-    # Remove leading/trailing whitespace and normalize line starts
-    lines = explanation.splitlines()
-    lines = [line.lstrip() for line in lines]  # remove indentation
-    explanation = "\n".join(lines)
+
+    # If AI fails or returns blank → create a fallback explanation
+    if not explanation or not explanation.strip():
+        explanation = (
+            f"1. Why the correct answer is correct:\n"
+            f"- The correct answer is **{correct}**.\n\n"
+            f"2. For each incorrect option, explain why it is wrong:\n"
+            + "\n".join([f"- **{opt}**: Incorrect option." for opt in options if opt != correct])
+            + "\n\n"
+            f"3. Why the user's selected answer may be incorrect:\n"
+            f"- You selected **{selected}**, but the correct answer is **{correct}**."
+            if selected != correct else
+            f"3. Why the user's selected answer may be incorrect:\n"
+            f"- Your answer is correct!"
+        )
+
+    # Clean formatting
+    explanation = "\n".join([line.lstrip() for line in explanation.splitlines()])
 
     return jsonify({
         "correct": correct,

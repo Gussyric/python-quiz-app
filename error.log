@@ -95,3 +95,161 @@
 2025-12-08 21:27:38,790 INFO:127.0.0.1 - - [08/Dec/2025 21:27:38] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
 2025-12-08 21:28:19,928 INFO:127.0.0.1 - - [08/Dec/2025 21:28:19] "GET /quiz/python HTTP/1.1" 200 -
 2025-12-08 21:28:19,962 INFO:127.0.0.1 - - [08/Dec/2025 21:28:19] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:14:27,645 INFO:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://172.16.30.1:5001
+2025-12-09 18:14:27,645 INFO:[33mPress CTRL+C to quit[0m
+2025-12-09 18:14:27,653 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:14:28,368 WARNING: * Debugger is active!
+2025-12-09 18:14:28,384 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:14:31,001 INFO:127.0.0.1 - - [09/Dec/2025 18:14:31] "GET / HTTP/1.1" 200 -
+2025-12-09 18:14:32,678 INFO:127.0.0.1 - - [09/Dec/2025 18:14:32] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:14:35,338 INFO:127.0.0.1 - - [09/Dec/2025 18:14:35] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-09 18:14:35,621 INFO:127.0.0.1 - - [09/Dec/2025 18:14:35] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:14:39,345 INFO:127.0.0.1 - - [09/Dec/2025 18:14:39] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:16:34,804 INFO:127.0.0.1 - - [09/Dec/2025 18:16:34] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:16:42,125 INFO:127.0.0.1 - - [09/Dec/2025 18:16:42] "GET / HTTP/1.1" 200 -
+2025-12-09 18:16:42,133 INFO:127.0.0.1 - - [09/Dec/2025 18:16:42] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:17:18,850 INFO:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://172.16.30.1:5001
+2025-12-09 18:17:18,851 INFO:[33mPress CTRL+C to quit[0m
+2025-12-09 18:17:18,859 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:17:19,578 WARNING: * Debugger is active!
+2025-12-09 18:17:19,590 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:17:21,905 INFO:127.0.0.1 - - [09/Dec/2025 18:17:21] "GET / HTTP/1.1" 200 -
+2025-12-09 18:17:21,916 INFO:127.0.0.1 - - [09/Dec/2025 18:17:21] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:17:23,011 INFO:127.0.0.1 - - [09/Dec/2025 18:17:23] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-09 18:17:23,018 INFO:127.0.0.1 - - [09/Dec/2025 18:17:23] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:17:31,532 INFO:127.0.0.1 - - [09/Dec/2025 18:17:31] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:21:26,824 INFO: * Detected change in '/Users/rizzlardoguscott/Documents/App_Devel/app.py', reloading
+2025-12-09 18:21:27,115 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:21:28,220 WARNING: * Debugger is active!
+2025-12-09 18:21:28,231 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:21:31,412 INFO:127.0.0.1 - - [09/Dec/2025 18:21:31] "GET / HTTP/1.1" 200 -
+2025-12-09 18:21:32,122 INFO:127.0.0.1 - - [09/Dec/2025 18:21:32] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:21:37,439 INFO:127.0.0.1 - - [09/Dec/2025 18:21:37] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-09 18:21:37,719 INFO:127.0.0.1 - - [09/Dec/2025 18:21:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:21:40,143 INFO:127.0.0.1 - - [09/Dec/2025 18:21:40] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:21:57,275 INFO:127.0.0.1 - - [09/Dec/2025 18:21:57] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-09 18:21:57,282 INFO:127.0.0.1 - - [09/Dec/2025 18:21:57] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:22:01,175 INFO:127.0.0.1 - - [09/Dec/2025 18:22:01] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:26:13,533 INFO: * Detected change in '/Users/rizzlardoguscott/Documents/App_Devel/app.py', reloading
+2025-12-09 18:26:13,866 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:26:14,981 WARNING: * Debugger is active!
+2025-12-09 18:26:14,993 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:26:18,251 INFO:127.0.0.1 - - [09/Dec/2025 18:26:18] "GET / HTTP/1.1" 200 -
+2025-12-09 18:26:18,264 INFO:127.0.0.1 - - [09/Dec/2025 18:26:18] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:26:20,683 INFO:127.0.0.1 - - [09/Dec/2025 18:26:20] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-09 18:26:20,690 INFO:127.0.0.1 - - [09/Dec/2025 18:26:20] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:26:26,982 INFO:127.0.0.1 - - [09/Dec/2025 18:26:26] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:29:16,821 INFO: * Detected change in '/Users/rizzlardoguscott/Documents/App_Devel/app.py', reloading
+2025-12-09 18:29:17,092 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:29:18,407 WARNING: * Debugger is active!
+2025-12-09 18:29:18,419 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:29:39,384 INFO: * Detected change in '/Users/rizzlardoguscott/Documents/App_Devel/app.py', reloading
+2025-12-09 18:29:39,718 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:29:40,867 WARNING: * Debugger is active!
+2025-12-09 18:29:40,878 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:29:42,904 INFO:127.0.0.1 - - [09/Dec/2025 18:29:42] "GET / HTTP/1.1" 200 -
+2025-12-09 18:29:42,923 INFO:127.0.0.1 - - [09/Dec/2025 18:29:42] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:29:49,532 INFO:127.0.0.1 - - [09/Dec/2025 18:29:49] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-09 18:29:49,815 INFO:127.0.0.1 - - [09/Dec/2025 18:29:49] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:29:51,676 INFO:127.0.0.1 - - [09/Dec/2025 18:29:51] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:29:51,757 INFO:127.0.0.1 - - [09/Dec/2025 18:29:51] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:29:55,241 INFO:127.0.0.1 - - [09/Dec/2025 18:29:55] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:29:59,684 INFO:127.0.0.1 - - [09/Dec/2025 18:29:59] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:30:28,533 INFO: * Detected change in '/Users/rizzlardoguscott/Documents/App_Devel/app.py', reloading
+2025-12-09 18:30:29,299 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:30:30,354 WARNING: * Debugger is active!
+2025-12-09 18:30:30,375 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:30:30,776 INFO: * Detected change in '/Users/rizzlardoguscott/Documents/App_Devel/app.py', reloading
+2025-12-09 18:30:31,659 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:30:32,645 WARNING: * Debugger is active!
+2025-12-09 18:30:32,656 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:30:35,390 INFO:127.0.0.1 - - [09/Dec/2025 18:30:35] "GET / HTTP/1.1" 200 -
+2025-12-09 18:30:35,406 INFO:127.0.0.1 - - [09/Dec/2025 18:30:35] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:30:38,350 INFO:127.0.0.1 - - [09/Dec/2025 18:30:38] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-09 18:30:38,357 INFO:127.0.0.1 - - [09/Dec/2025 18:30:38] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:30:40,791 INFO:127.0.0.1 - - [09/Dec/2025 18:30:40] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:33:37,762 INFO:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://172.16.30.1:5001
+2025-12-09 18:33:37,762 INFO:[33mPress CTRL+C to quit[0m
+2025-12-09 18:33:37,771 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:33:38,520 WARNING: * Debugger is active!
+2025-12-09 18:33:38,532 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:33:45,726 INFO:127.0.0.1 - - [09/Dec/2025 18:33:45] "GET / HTTP/1.1" 200 -
+2025-12-09 18:33:45,741 INFO:127.0.0.1 - - [09/Dec/2025 18:33:45] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:33:49,813 INFO:127.0.0.1 - - [09/Dec/2025 18:33:49] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-09 18:33:49,820 INFO:127.0.0.1 - - [09/Dec/2025 18:33:49] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:33:52,002 INFO:127.0.0.1 - - [09/Dec/2025 18:33:52] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:35:59,703 INFO: * Detected change in '/Users/rizzlardoguscott/Documents/App_Devel/api.py', reloading
+2025-12-09 18:36:00,445 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:36:01,528 WARNING: * Debugger is active!
+2025-12-09 18:36:01,541 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:36:03,675 INFO:127.0.0.1 - - [09/Dec/2025 18:36:03] "GET / HTTP/1.1" 200 -
+2025-12-09 18:36:04,294 INFO:127.0.0.1 - - [09/Dec/2025 18:36:04] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:36:06,932 INFO:127.0.0.1 - - [09/Dec/2025 18:36:06] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-09 18:36:07,215 INFO:127.0.0.1 - - [09/Dec/2025 18:36:07] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:36:17,874 INFO:127.0.0.1 - - [09/Dec/2025 18:36:17] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:36:32,465 INFO:127.0.0.1 - - [09/Dec/2025 18:36:32] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:37:27,861 INFO:127.0.0.1 - - [09/Dec/2025 18:37:27] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:37:45,409 INFO:127.0.0.1 - - [09/Dec/2025 18:37:45] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:38:31,656 INFO:127.0.0.1 - - [09/Dec/2025 18:38:31] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:38:42,816 INFO:127.0.0.1 - - [09/Dec/2025 18:38:42] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:39:18,864 INFO: * Detected change in '/Users/rizzlardoguscott/Documents/App_Devel/app.py', reloading
+2025-12-09 18:39:19,700 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:39:20,852 WARNING: * Debugger is active!
+2025-12-09 18:39:20,907 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:39:29,316 INFO:127.0.0.1 - - [09/Dec/2025 18:39:29] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:40:18,663 INFO:127.0.0.1 - - [09/Dec/2025 18:40:18] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:40:45,804 INFO:127.0.0.1 - - [09/Dec/2025 18:40:45] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:41:43,657 INFO:127.0.0.1 - - [09/Dec/2025 18:41:43] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:41:50,136 INFO:127.0.0.1 - - [09/Dec/2025 18:41:50] "GET / HTTP/1.1" 200 -
+2025-12-09 18:41:50,443 INFO:127.0.0.1 - - [09/Dec/2025 18:41:50] "GET /static/style.css HTTP/1.1" 200 -
+2025-12-09 18:41:52,027 INFO:127.0.0.1 - - [09/Dec/2025 18:41:52] "GET /dashboard HTTP/1.1" 200 -
+2025-12-09 18:41:52,314 INFO:127.0.0.1 - - [09/Dec/2025 18:41:52] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:46:51,114 INFO: * Detected change in '/Users/rizzlardoguscott/Documents/App_Devel/app.py', reloading
+2025-12-09 18:46:51,630 INFO: * Restarting with watchdog (fsevents)
+2025-12-09 18:46:52,808 WARNING: * Debugger is active!
+2025-12-09 18:46:52,822 INFO: * Debugger PIN: 897-135-290
+2025-12-09 18:46:58,556 INFO:127.0.0.1 - - [09/Dec/2025 18:46:58] "GET / HTTP/1.1" 200 -
+2025-12-09 18:46:59,731 INFO:127.0.0.1 - - [09/Dec/2025 18:46:59] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:47:04,877 INFO:127.0.0.1 - - [09/Dec/2025 18:47:04] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-09 18:47:05,165 INFO:127.0.0.1 - - [09/Dec/2025 18:47:05] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:47:13,334 INFO:127.0.0.1 - - [09/Dec/2025 18:47:13] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:47:26,411 INFO:127.0.0.1 - - [09/Dec/2025 18:47:26] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:48:56,683 INFO:127.0.0.1 - - [09/Dec/2025 18:48:56] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:49:33,368 INFO:127.0.0.1 - - [09/Dec/2025 18:49:33] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:49:55,077 INFO:127.0.0.1 - - [09/Dec/2025 18:49:55] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:50:21,798 INFO:127.0.0.1 - - [09/Dec/2025 18:50:21] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:50:47,403 INFO:127.0.0.1 - - [09/Dec/2025 18:50:47] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:50:55,194 INFO:127.0.0.1 - - [09/Dec/2025 18:50:55] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:51:07,608 INFO:127.0.0.1 - - [09/Dec/2025 18:51:07] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:51:18,421 INFO:127.0.0.1 - - [09/Dec/2025 18:51:18] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-09 18:51:29,757 INFO:127.0.0.1 - - [09/Dec/2025 18:51:29] "GET / HTTP/1.1" 200 -
+2025-12-09 18:51:29,766 INFO:127.0.0.1 - - [09/Dec/2025 18:51:29] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:51:33,478 INFO:127.0.0.1 - - [09/Dec/2025 18:51:33] "GET /study/python HTTP/1.1" 200 -
+2025-12-09 18:51:33,754 INFO:127.0.0.1 - - [09/Dec/2025 18:51:33] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:51:34,899 INFO:127.0.0.1 - - [09/Dec/2025 18:51:34] "GET / HTTP/1.1" 200 -
+2025-12-09 18:51:34,906 INFO:127.0.0.1 - - [09/Dec/2025 18:51:34] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:51:35,807 INFO:127.0.0.1 - - [09/Dec/2025 18:51:35] "GET /study/java HTTP/1.1" 200 -
+2025-12-09 18:51:36,091 INFO:127.0.0.1 - - [09/Dec/2025 18:51:36] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:51:37,237 INFO:127.0.0.1 - - [09/Dec/2025 18:51:37] "GET / HTTP/1.1" 200 -
+2025-12-09 18:51:37,244 INFO:127.0.0.1 - - [09/Dec/2025 18:51:37] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:51:38,234 INFO:127.0.0.1 - - [09/Dec/2025 18:51:38] "GET /study/cpp HTTP/1.1" 200 -
+2025-12-09 18:51:38,510 INFO:127.0.0.1 - - [09/Dec/2025 18:51:38] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:51:39,266 INFO:127.0.0.1 - - [09/Dec/2025 18:51:39] "GET / HTTP/1.1" 200 -
+2025-12-09 18:51:39,273 INFO:127.0.0.1 - - [09/Dec/2025 18:51:39] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:51:40,100 INFO:127.0.0.1 - - [09/Dec/2025 18:51:40] "GET /quiz/java HTTP/1.1" 200 -
+2025-12-09 18:51:40,376 INFO:127.0.0.1 - - [09/Dec/2025 18:51:40] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:51:42,712 INFO:127.0.0.1 - - [09/Dec/2025 18:51:42] "GET / HTTP/1.1" 200 -
+2025-12-09 18:51:42,720 INFO:127.0.0.1 - - [09/Dec/2025 18:51:42] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:51:43,736 INFO:127.0.0.1 - - [09/Dec/2025 18:51:43] "GET /quiz/cpp HTTP/1.1" 200 -
+2025-12-09 18:51:44,010 INFO:127.0.0.1 - - [09/Dec/2025 18:51:44] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-09 18:51:45,304 INFO:127.0.0.1 - - [09/Dec/2025 18:51:45] "GET / HTTP/1.1" 200 -
+2025-12-09 18:51:45,310 INFO:127.0.0.1 - - [09/Dec/2025 18:51:45] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
