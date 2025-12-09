@@ -1,0 +1,97 @@
+2025-12-08 19:45:07,050 INFO:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.0.91:5001
+2025-12-08 19:45:07,050 INFO:[33mPress CTRL+C to quit[0m
+2025-12-08 19:45:07,053 INFO: * Restarting with stat
+2025-12-08 19:45:09,160 WARNING: * Debugger is active!
+2025-12-08 19:45:09,177 INFO: * Debugger PIN: 147-950-796
+2025-12-08 19:45:11,176 INFO:127.0.0.1 - - [08/Dec/2025 19:45:11] "GET / HTTP/1.1" 200 -
+2025-12-08 19:45:11,179 INFO:127.0.0.1 - - [08/Dec/2025 19:45:11] "GET / HTTP/1.1" 200 -
+2025-12-08 19:45:11,464 INFO:127.0.0.1 - - [08/Dec/2025 19:45:11] "GET /static/style.css HTTP/1.1" 200 -
+2025-12-08 19:45:11,468 INFO:127.0.0.1 - - [08/Dec/2025 19:45:11] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 19:45:14,891 INFO:127.0.0.1 - - [08/Dec/2025 19:45:14] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-08 19:45:14,929 INFO:127.0.0.1 - - [08/Dec/2025 19:45:14] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 19:45:16,936 INFO:127.0.0.1 - - [08/Dec/2025 19:45:16] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 19:45:22,401 INFO:127.0.0.1 - - [08/Dec/2025 19:45:22] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 19:45:25,181 INFO:127.0.0.1 - - [08/Dec/2025 19:45:25] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 19:45:27,669 INFO:127.0.0.1 - - [08/Dec/2025 19:45:27] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:01:27,786 INFO:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.0.91:5001
+2025-12-08 20:01:27,787 INFO:[33mPress CTRL+C to quit[0m
+2025-12-08 20:01:27,789 INFO: * Restarting with stat
+2025-12-08 20:01:29,269 WARNING: * Debugger is active!
+2025-12-08 20:01:29,275 INFO: * Debugger PIN: 147-950-796
+2025-12-08 20:01:49,120 INFO:127.0.0.1 - - [08/Dec/2025 20:01:49] "GET / HTTP/1.1" 200 -
+2025-12-08 20:01:49,204 INFO:127.0.0.1 - - [08/Dec/2025 20:01:49] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 20:01:50,697 INFO:127.0.0.1 - - [08/Dec/2025 20:01:50] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-08 20:01:50,748 INFO:127.0.0.1 - - [08/Dec/2025 20:01:50] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 20:01:52,818 INFO:127.0.0.1 - - [08/Dec/2025 20:01:52] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:01:55,792 INFO:127.0.0.1 - - [08/Dec/2025 20:01:55] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:02:00,251 INFO:127.0.0.1 - - [08/Dec/2025 20:02:00] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:02:02,903 INFO:127.0.0.1 - - [08/Dec/2025 20:02:02] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:02:08,428 INFO:127.0.0.1 - - [08/Dec/2025 20:02:08] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:02:10,981 INFO:127.0.0.1 - - [08/Dec/2025 20:02:10] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:02:19,074 INFO:127.0.0.1 - - [08/Dec/2025 20:02:19] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:02:21,331 INFO:127.0.0.1 - - [08/Dec/2025 20:02:21] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:02:24,584 INFO:127.0.0.1 - - [08/Dec/2025 20:02:24] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:02:27,588 INFO:127.0.0.1 - - [08/Dec/2025 20:02:27] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:02:29,886 INFO:127.0.0.1 - - [08/Dec/2025 20:02:29] "GET / HTTP/1.1" 200 -
+2025-12-08 20:02:29,937 INFO:127.0.0.1 - - [08/Dec/2025 20:02:29] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 20:02:31,339 INFO:127.0.0.1 - - [08/Dec/2025 20:02:31] "GET /quiz/java HTTP/1.1" 200 -
+2025-12-08 20:02:31,368 INFO:127.0.0.1 - - [08/Dec/2025 20:02:31] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 20:02:34,169 INFO:127.0.0.1 - - [08/Dec/2025 20:02:34] "POST /quiz/java/answer HTTP/1.1" 200 -
+2025-12-08 20:02:36,621 INFO:127.0.0.1 - - [08/Dec/2025 20:02:36] "POST /quiz/java/answer HTTP/1.1" 200 -
+2025-12-08 20:02:39,163 INFO:127.0.0.1 - - [08/Dec/2025 20:02:39] "POST /quiz/java/answer HTTP/1.1" 200 -
+2025-12-08 20:02:41,388 INFO:127.0.0.1 - - [08/Dec/2025 20:02:41] "GET / HTTP/1.1" 200 -
+2025-12-08 20:02:41,414 INFO:127.0.0.1 - - [08/Dec/2025 20:02:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 20:02:42,474 INFO:127.0.0.1 - - [08/Dec/2025 20:02:42] "GET /quiz/cpp HTTP/1.1" 200 -
+2025-12-08 20:02:42,498 INFO:127.0.0.1 - - [08/Dec/2025 20:02:42] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 20:02:43,606 INFO:127.0.0.1 - - [08/Dec/2025 20:02:43] "POST /quiz/cpp/answer HTTP/1.1" 200 -
+2025-12-08 20:02:46,584 INFO:127.0.0.1 - - [08/Dec/2025 20:02:46] "POST /quiz/cpp/answer HTTP/1.1" 200 -
+2025-12-08 20:02:48,228 INFO:127.0.0.1 - - [08/Dec/2025 20:02:48] "GET / HTTP/1.1" 200 -
+2025-12-08 20:02:48,251 INFO:127.0.0.1 - - [08/Dec/2025 20:02:48] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 20:41:26,353 INFO:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.0.91:5001
+2025-12-08 20:41:26,356 INFO:[33mPress CTRL+C to quit[0m
+2025-12-08 20:41:26,359 INFO: * Restarting with stat
+2025-12-08 20:41:27,875 WARNING: * Debugger is active!
+2025-12-08 20:41:27,883 INFO: * Debugger PIN: 147-950-796
+2025-12-08 20:41:31,118 INFO:127.0.0.1 - - [08/Dec/2025 20:41:31] "GET / HTTP/1.1" 200 -
+2025-12-08 20:41:31,183 INFO:127.0.0.1 - - [08/Dec/2025 20:41:31] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 20:41:41,703 INFO:127.0.0.1 - - [08/Dec/2025 20:41:41] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-08 20:41:41,731 INFO:127.0.0.1 - - [08/Dec/2025 20:41:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 20:41:56,950 INFO:127.0.0.1 - - [08/Dec/2025 20:41:56] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:42:04,854 INFO:127.0.0.1 - - [08/Dec/2025 20:42:04] "POST /quiz/python/answer HTTP/1.1" 200 -
+2025-12-08 20:42:11,064 INFO:127.0.0.1 - - [08/Dec/2025 20:42:11] "GET / HTTP/1.1" 200 -
+2025-12-08 20:42:11,099 INFO:127.0.0.1 - - [08/Dec/2025 20:42:11] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 21:24:42,883 INFO:127.0.0.1 - - [08/Dec/2025 21:24:42] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-08 21:24:42,958 INFO:127.0.0.1 - - [08/Dec/2025 21:24:42] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 21:24:46,896 INFO:127.0.0.1 - - [08/Dec/2025 21:24:46] "GET / HTTP/1.1" 200 -
+2025-12-08 21:24:46,932 INFO:127.0.0.1 - - [08/Dec/2025 21:24:46] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 21:26:38,576 INFO:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.0.91:5001
+2025-12-08 21:26:38,576 INFO:[33mPress CTRL+C to quit[0m
+2025-12-08 21:26:38,579 INFO: * Restarting with stat
+2025-12-08 21:26:39,991 WARNING: * Debugger is active!
+2025-12-08 21:26:39,997 INFO: * Debugger PIN: 147-950-796
+2025-12-08 21:26:41,150 INFO:127.0.0.1 - - [08/Dec/2025 21:26:41] "GET / HTTP/1.1" 200 -
+2025-12-08 21:26:41,207 INFO:127.0.0.1 - - [08/Dec/2025 21:26:41] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 21:27:36,289 INFO:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.0.0.91:5001
+2025-12-08 21:27:36,290 INFO:[33mPress CTRL+C to quit[0m
+2025-12-08 21:27:36,292 INFO: * Restarting with stat
+2025-12-08 21:27:37,808 WARNING: * Debugger is active!
+2025-12-08 21:27:37,811 INFO: * Debugger PIN: 147-950-796
+2025-12-08 21:27:38,742 INFO:127.0.0.1 - - [08/Dec/2025 21:27:38] "GET / HTTP/1.1" 200 -
+2025-12-08 21:27:38,790 INFO:127.0.0.1 - - [08/Dec/2025 21:27:38] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-12-08 21:28:19,928 INFO:127.0.0.1 - - [08/Dec/2025 21:28:19] "GET /quiz/python HTTP/1.1" 200 -
+2025-12-08 21:28:19,962 INFO:127.0.0.1 - - [08/Dec/2025 21:28:19] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
