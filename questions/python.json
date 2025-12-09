@@ -72,7 +72,6 @@
     {"question":"Which loop is guaranteed to execute at least once?","options":["for","while","do-while","Python has no do-while"],"answer":"Python has no do-while","explanation":"Python doesn’t have a do-while loop structure."},
     {"question":"Which keyword handles exceptions in Python?","options":["try","catch","except","handle"],"answer":"try","explanation":"Use 'try' with 'except' to handle exceptions in Python."},
     {"question":"What is the output of print(5 == 5)?","options":["True","False","5","Error"],"answer":"True","explanation":"'==' checks equality. Since 5 equals 5, it returns True."},
-    {"question":"Which of these creates a set?","options":["{1,2,3}","[1,2,3]","(1,2,3)","{1:2,2:3}"],"answer":"{1,2,3}","explanation":"Curly braces with comma-separated values define a set in Python."},
-    {"question":"What is the output of print(type([]))?","options":["<class 'list'>","<class 'tuple'>","<class 'dict'>","<class 'set'>"],"answer":"<class 'list'>","explanation":"Square brackets [] create a list in Python."}
+    {"question":"Which of these creates a set?","options":["{1,2,3}","[1,2,3]","(1,2,3)","{1:2,2:3}"],"answer":"{1,2,3}","explanation":"Curly braces with comma-separated values define a set in Python."}
 ]
 

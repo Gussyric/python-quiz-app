@@ -4,6 +4,28 @@
 {% block content %}
 <h1>{{ language | capitalize }} Quiz</h1>
 
+<!-- PROGRESS BAR ADDED -->
+<div class="progress-container">
+    <div class="progress-bar" id="progress-bar"></div>
+</div>
+
+<style>
+.progress-container {
+    width: 100%;
+    background-color: #222;
+    border-radius: 6px;
+    height: 12px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: #4caf50;
+    transition: width 0.35s ease;
+}
+</style>
+
 <div id="quiz-box">Loading...</div>
 
 <script>
@@ -16,9 +38,19 @@ let answered = {};
 // Structure:
 // answered[index] = { selected: ..., correct: ..., explanation: ... }
 
+// Update progress bar
+function updateProgress() {
+    const bar = document.getElementById("progress-bar");
+    const percent = (currentIndex / questions.length) * 100;
+    bar.style.width = percent + "%";
+}
+
 function showQuestion() {
+    updateProgress();
+
     // If going forward past final question
     if (currentIndex >= questions.length) {
+        updateProgress();
         document.getElementById("quiz-box").innerHTML = `
             <h2>Quiz Finished!</h2>
             <p>Your Score: ${score} / ${questions.length}</p>
@@ -61,7 +93,6 @@ ${record.explanation}
         }
 
         document.getElementById("return-btn").addEventListener("click", () => {
-            // Jump forward to first unanswered question
             currentIndex = getFirstUnanswered();
             showQuestion();
         });
@@ -90,7 +121,6 @@ ${record.explanation}
         btn.className = "btn";
 
         btn.addEventListener("click", () => {
-            console.log("Button clicked:", opt);
             submitAnswer(opt, q.answer, q.options);
         });
 
@@ -124,7 +154,6 @@ function submitAnswer(selected, correct, options) {
     .then(res => res.json())
     .then(data => {
 
-        // Save answer so user cannot redo it
         answered[currentIndex] = {
             selected,
             correct,
@@ -163,14 +192,15 @@ ${data.explanation.trim()}
     });
 }
 
-// Find first unanswered question
 function getFirstUnanswered() {
     for (let i = 0; i < questions.length; i++) {
         if (!answered[i]) return i;
     }
-    return questions.length; // finished
+    return questions.length;
 }
 
 document.addEventListener("DOMContentLoaded", showQuestion);
 </script>
 {% endblock %}
+
+

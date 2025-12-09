@@ -87,11 +87,11 @@
         }
 
         .study-btn:disabled {
-            background-color: #6c757d; /* grey for disabled buttons */
+            background-color: #6c757d;
             cursor: not-allowed;
         }
 
-        /* Quiz options */
+        /* Quiz option styling */
         .option {
             margin-bottom: 8px;
             padding: 10px;
@@ -114,12 +114,12 @@
         }
 
         #quiz-form button {
-            background-color: #880397;   /* purple */
+            background-color: #880397;
             color: white;
         }
 
         #quiz-form button:hover {
-            background-color: #a33abf;   /* lighter purple */
+            background-color: #a33abf;
         }
     </style>
 </head>
@@ -128,73 +128,78 @@
     <div class="container">
 
         <!-- TOP NAV BAR -->
-         <nav>
+        <nav>
             {% if session.get('user') %}
                 <a href="{{ url_for('home') }}" class="btn">🏠 Home</a>
                 <a href="{{ url_for('dashboard') }}" class="btn">📊 Dashboard</a>
             {% else %}
                 <a href="{{ url_for('home') }}" class="btn">🏠 Home</a>
             {% endif %}
+
+            <!-- NEW GLOBAL READ PAGE BUTTON -->
+            <button id="read-page-btn" class="btn">🔊 Read Page</button>
         </nav>
 
 
-        <!-- Intro Paragraph & Read Aloud Button -->
+        <!-- Intro Paragraph (only if logged in) -->
         {% if session.get('user') %}
         <div id="intro-container">
             <p id="welcome-text">Welcome, {{ session['user'] }}!</p>
             <p id="intro-text" class="intro-text">
-                Welcome to the Programming Language Quiz App! Here you can take quizzes on Python, Java, and C++, review study guides, and track your progress on the dashboard.
+                Welcome to the Programming Language Quiz App! Here you can take quizzes on Python, Java, and C++, review study guides, and track your progress.
             </p>
-            <button id="read-intro-btn" class="btn">🔊 Read Aloud</button>
         </div>
         {% endif %}
 
         <!-- Main Page Content -->
-        {% block content %}{% endblock %}
-        
+        <div id="page-content">
+            {% block content %}{% endblock %}
+        </div>
+
     </div>
 
-    <!-- Read Aloud Script -->
+    <!-- GLOBAL READ PAGE SCRIPT -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const readBtn = document.getElementById("read-intro-btn");
-            if (!readBtn) return;
+
+            const readPageBtn = document.getElementById("read-page-btn");
 
             let isReading = false;
             let utterance;
 
-            readBtn.addEventListener("click", () => {
-                const introText = document.getElementById("intro-text")?.textContent ?? "";
-                const welcomeText = document.getElementById("welcome-text")?.textContent ?? "";
-                const combinedText = `${welcomeText} ${introText}`;
+            readPageBtn.addEventListener("click", () => {
+                const textElements = document.querySelectorAll("h1, h2, h3, p, li, .intro-text");
+                let fullText = "";
+
+                textElements.forEach(el => {
+                    fullText += el.textContent + " ";
+                });
 
                 if (!isReading) {
-                    // Start reading
-                    if ('speechSynthesis' in window && combinedText) {
-                        utterance = new SpeechSynthesisUtterance(combinedText);
+                    if ("speechSynthesis" in window) {
+                        utterance = new SpeechSynthesisUtterance(fullText);
                         utterance.rate = 1;
                         utterance.pitch = 1;
-                        utterance.lang = 'en-US';
+                        utterance.lang = "en-US";
+
                         window.speechSynthesis.speak(utterance);
                         isReading = true;
-                        readBtn.textContent = "⏹ Stop Reading";
-                        
-                        // Reset state when finished
+                        readPageBtn.textContent = "⏹ Stop";
+
                         utterance.onend = () => {
                             isReading = false;
-                            readBtn.textContent = "🔊 Read Aloud";
+                            readPageBtn.textContent = "🔊 Read Page";
                         };
-                    } else {
-                        alert("Text-to-speech not supported in this browser.");
                     }
                 } else {
-                    // Stop reading
                     window.speechSynthesis.cancel();
                     isReading = false;
-                    readBtn.textContent = "🔊 Read Aloud";
+                    readPageBtn.textContent = "🔊 Read Page";
                 }
             });
+
         });
     </script>
+
 </body>
 </html>
