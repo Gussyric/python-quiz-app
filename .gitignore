@@ -1,6 +1,7 @@
 __pycache__/
-*.pyc
 instance/
+k8s/
 user_log.json
 users.json
-quiz.db
+api.py
+error.log
