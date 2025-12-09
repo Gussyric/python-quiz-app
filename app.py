@@ -368,4 +368,4 @@ def trigger_error():
 if __name__ == "__main__":
     port = 5001
     print(f"Starting server on http://127.0.0.1:{port}")
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=True)

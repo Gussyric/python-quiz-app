@@ -11,7 +11,13 @@ const questions = {{ questions|tojson }};
 let currentIndex = 0;
 let score = 0;
 
+// Store answered questions so we can show explanation when going back
+let answered = {};  
+// Structure:
+// answered[index] = { selected: ..., correct: ..., explanation: ... }
+
 function showQuestion() {
+    // If going forward past final question
     if (currentIndex >= questions.length) {
         document.getElementById("quiz-box").innerHTML = `
             <h2>Quiz Finished!</h2>
@@ -21,13 +27,58 @@ function showQuestion() {
         return;
     }
 
-    const q = questions[currentIndex];
     const quizBox = document.getElementById("quiz-box");
 
+    // If this question was already answered, DO NOT ALLOW re-answer
+    if (answered[currentIndex]) {
+        const record = answered[currentIndex];
+
+        quizBox.innerHTML = `
+            <h2>Question ${currentIndex + 1} / ${questions.length}</h2>
+            <p>${questions[currentIndex].question}</p>
+
+            <p><strong>Correct Answer:</strong> ${record.correct}</p>
+
+            <div style="white-space: pre-wrap; margin-top: 10px;">
+${record.explanation}
+            </div>
+
+            <p style="font-size: 0.85em; color: #ccc; margin-top: 8px;">
+                Note: Explanations are AI-generated for educational purposes.
+            </p>
+
+            <div style="margin-top: 15px;">
+                ${currentIndex > 0 ? `<button class="btn" id="prev-btn">Previous Question</button>` : ""}
+                <button class="btn" id="return-btn">Return to Current Question</button>
+            </div>
+        `;
+
+        if (currentIndex > 0) {
+            document.getElementById("prev-btn").addEventListener("click", () => {
+                currentIndex--;
+                showQuestion();
+            });
+        }
+
+        document.getElementById("return-btn").addEventListener("click", () => {
+            // Jump forward to first unanswered question
+            currentIndex = getFirstUnanswered();
+            showQuestion();
+        });
+
+        return;
+    }
+
+    // If question has NOT been answered yet (normal behavior)
+    const q = questions[currentIndex];
     quizBox.innerHTML = `
         <h2>Question ${currentIndex + 1} / ${questions.length}</h2>
         <p>${q.question}</p>
         <ul id="options-list"></ul>
+
+        <div style="margin-top: 15px;">
+            ${currentIndex > 0 ? `<button class="btn" id="prev-btn">Previous Question</button>` : ""}
+        </div>
     `;
 
     const ul = document.getElementById("options-list");
@@ -39,47 +90,71 @@ function showQuestion() {
         btn.className = "btn";
 
         btn.addEventListener("click", () => {
-            console.log("Button clicked:", opt); // Browser console debug
-
+            console.log("Button clicked:", opt);
             submitAnswer(opt, q.answer, q.options);
         });
 
         li.appendChild(btn);
         ul.appendChild(li);
     });
+
+    if (currentIndex > 0) {
+        document.getElementById("prev-btn").addEventListener("click", () => {
+            currentIndex--;
+            showQuestion();
+        });
+    }
 }
 
 function submitAnswer(selected, correct, options) {
-    if (selected === correct) score++;
-
     const quizBox = document.getElementById("quiz-box");
+
+    if (selected === correct) score++;
 
     fetch(`/quiz/{{ language }}/answer`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
             question: questions[currentIndex].question,
-            selected: selected,
-            correct: correct,
-            options: options
+            selected,
+            correct,
+            options
         })
     })
     .then(res => res.json())
     .then(data => {
-        // Automatically format AI explanation into numbered bullets
-        const explanationFormatted = formatExplanation(data.explanation);
+
+        // Save answer so user cannot redo it
+        answered[currentIndex] = {
+            selected,
+            correct,
+            explanation: data.explanation.trim()
+        };
 
         quizBox.innerHTML = `
             <h2>${data.selected === data.correct ? "Correct!" : "Incorrect!"}</h2>
             <p><strong>Correct Answer:</strong> ${data.correct}</p>
-            <div style="margin-top: 10px;">
-                ${explanationFormatted}
+
+            <div style="white-space: pre-wrap; margin-top: 10px;">
+${data.explanation.trim()}
             </div>
+
             <p style="font-size: 0.85em; color: #ccc; margin-top: 8px;">
                 Note: Explanations are AI-generated for educational purposes.
             </p>
-            <button class="btn" id="next-btn">Next Question</button>
+
+            <div style="margin-top: 15px;">
+                ${currentIndex > 0 ? `<button class="btn" id="prev-btn">Previous Question</button>` : ""}
+                <button class="btn" id="next-btn">Next Question</button>
+            </div>
         `;
+
+        if (currentIndex > 0) {
+            document.getElementById("prev-btn").addEventListener("click", () => {
+                currentIndex--;
+                showQuestion();
+            });
+        }
 
         document.getElementById("next-btn").addEventListener("click", () => {
             currentIndex++;
@@ -88,32 +163,12 @@ function submitAnswer(selected, correct, options) {
     });
 }
 
-// Helper function to convert AI explanation text into bullet lists
-function formatExplanation(text) {
-    // Split by numbered sections (1., 2., 3.) and create <ol> list
-    const sections = text.split(/\d+\.\s+/).filter(s => s.trim() !== "");
-    let html = "<ol>";
-    sections.forEach(section => {
-        // Further split into lines starting with "- " for nested bullets
-        const lines = section.trim().split(/\n-\s+/).map(l => l.trim()).filter(l => l !== "");
-        html += "<li>";
-        if (lines.length > 0) {
-            html += "<ul>";
-            lines.forEach((line, i) => {
-                if (i === 0) {
-                    html += `<li>${line}</li>`; // main section first line
-                } else {
-                    html += `<li>${line}</li>`;
-                }
-            });
-            html += "</ul>";
-        } else {
-            html += section.trim();
-        }
-        html += "</li>";
-    });
-    html += "</ol>";
-    return html;
+// Find first unanswered question
+function getFirstUnanswered() {
+    for (let i = 0; i < questions.length; i++) {
+        if (!answered[i]) return i;
+    }
+    return questions.length; // finished
 }
 
 document.addEventListener("DOMContentLoaded", showQuestion);
