@@ -1,7 +1,32 @@
-__pycache__/
-instance/
-k8s/
+# macOS
+.DS_Store
+
+# Logs + local user data
+*.log
+error.log
+nohup.out
+last_patch.diff
 user_log.json
 users.json
+
+# Runtime data
+auto_maintain_state.json
+cookies.txt
+
+# Secrets
+personal_email.py
+*.txt
+k8s/secret.local.yaml
+
+# Flask instance folder (DB + secrets)
+instance/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Kubernetes configs (if sensitive)
+k8s/
+
+# Local API scripts
 api.py
-error.log
