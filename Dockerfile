@@ -1,21 +1,20 @@
-# Dockerfile
-
-# Use Python 3.11 slim image
+# Use Python base image
 FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
 
-# Copy project files
-COPY . /app
+# Copy requirements
+COPY requirements.txt .
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-# If you don’t have a requirements.txt, list packages like:
-# RUN pip install flask requests difflib
 
-# Expose the port your Flask app runs on
+# Copy the rest of the app
+COPY . .
+
+# Expose port 5001
 EXPOSE 5001
 
-# Start the Flask app
+# Command to run the app
 CMD ["python", "app.py"]
