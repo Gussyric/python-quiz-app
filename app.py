@@ -26,8 +26,11 @@ logging.basicConfig(
 # Flask App Setup
 # ---------------------------
 # OpenAI
-from api import API_KEY
-client = OpenAI(api_key=API_KEY)
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    raise RuntimeError("OPENAI_API_KEY not set in environment!")
+
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Ensure instance folder exists
 basedir = os.path.abspath(os.path.dirname(__file__))

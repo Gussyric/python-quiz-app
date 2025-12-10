@@ -17,7 +17,7 @@ cookies.txt
 personal_email.py
 *.txt
 k8s/secret.local.yaml
-
+!requirements.txt
 # Flask instance folder (DB + secrets)
 instance/
 
